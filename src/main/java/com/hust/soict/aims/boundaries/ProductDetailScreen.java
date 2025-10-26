@@ -1,10 +1,9 @@
 package com.hust.soict.aims.boundaries;
 
-import com.hust.soict.aims.entities.*;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import com.hust.soict.aims.entities.*;
 
 public class ProductDetailScreen extends JDialog {
     public ProductDetailScreen(Frame owner, Product p) {

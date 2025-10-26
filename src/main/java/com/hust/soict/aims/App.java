@@ -3,7 +3,7 @@ package com.hust.soict.aims;
 import com.hust.soict.aims.boundaries.MainWindow;
 import com.hust.soict.aims.controls.PayByCreditCardController;
 import com.hust.soict.aims.controls.ProductController;
-
+import com.hust.soict.aims.controls.CartController;
 import javax.swing.*;
 
 public class App {
@@ -13,10 +13,10 @@ public class App {
 		var paymentController = ctx.getBean(PayByCreditCardController.class);
 
 		SwingUtilities.invokeLater(() -> {
-			ProductController controller = new ProductController();
-			com.hust.soict.aims.controls.CartController cart = new com.hust.soict.aims.controls.CartController();
+			ProductController productController = new ProductController();
+			CartController cartController = new CartController();
 
-			MainWindow w = new MainWindow(controller, cart, paymentController);
+			MainWindow w = new MainWindow(productController, cartController, paymentController);
 			w.setVisible(true);
 		});
 	}

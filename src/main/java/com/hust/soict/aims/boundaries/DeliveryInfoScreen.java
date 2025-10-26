@@ -1,9 +1,8 @@
 package com.hust.soict.aims.boundaries;
 
-import com.hust.soict.aims.entities.DeliveryInfo;
-
 import javax.swing.*;
 import java.awt.*;
+import com.hust.soict.aims.entities.DeliveryInfo;
 
 public class DeliveryInfoScreen extends JDialog {
     private DeliveryInfo info;
