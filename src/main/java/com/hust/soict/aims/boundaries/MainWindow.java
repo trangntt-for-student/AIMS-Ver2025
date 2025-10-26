@@ -1,12 +1,12 @@
 package com.hust.soict.aims.boundaries;
 
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
 import com.hust.soict.aims.controls.ProductController;
 import com.hust.soict.aims.controls.PayByCreditCardController;
 import com.hust.soict.aims.entities.Product;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.List;
 
 public class MainWindow extends JFrame {
     private final ProductController controller;

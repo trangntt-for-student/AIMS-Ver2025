@@ -1,18 +1,18 @@
 package com.hust.soict.aims.boundaries;
 
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
+
 import com.hust.soict.aims.controls.CartController;
 import com.hust.soict.aims.controls.PayByCreditCardController;
 import com.hust.soict.aims.controls.PlaceOrderController;
 import com.hust.soict.aims.entities.CartItem;
 import com.hust.soict.aims.entities.DeliveryInfo;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.List;
 
 public class CartScreen extends JFrame {
     private final CartController cart;
-    private final PayByCreditCardController paymentController;
     private final PlaceOrderController placeController;
     private JPanel itemsPanel;
     private JLabel subtotalLabel;
@@ -20,7 +20,6 @@ public class CartScreen extends JFrame {
     public CartScreen(CartController cart, PayByCreditCardController paymentController) {
         super("Cart");
         this.cart = cart;
-        this.paymentController = paymentController;
         this.placeController = new PlaceOrderController(cart);
         setSize(600, 600);
         setLayout(new BorderLayout());

@@ -1,24 +1,21 @@
 package com.hust.soict.aims.boundaries;
 
-import com.hust.soict.aims.controls.PayByCreditCardController;
-import com.hust.soict.aims.entities.Invoice;
 import javax.swing.*;
 import java.awt.*;
-
+import com.hust.soict.aims.controls.PayByCreditCardController;
+import com.hust.soict.aims.entities.Invoice;
 
 public class InvoiceScreen extends JDialog {
     private boolean paid = false;
-    private final PayByCreditCardController paymentController;
 
     public InvoiceScreen(Frame owner, Invoice invoice, PayByCreditCardController paymentController) {
         super(owner, "Invoice", true);
-        this.paymentController = paymentController;
         setSize(500, 500);
         setLayout(new BorderLayout());
 
         JTextArea area = new JTextArea();
         area.setEditable(false);
-        // ... (Code hiển thị hóa đơn của bạn giữ nguyên, rất tốt) ...
+
         StringBuilder sb = new StringBuilder();
         sb.append("Invoice\n");
         sb.append("Subtotal: ").append(String.format("%.2f VND\n", invoice.getSubtotal()));
@@ -37,7 +34,6 @@ public class InvoiceScreen extends JDialog {
         add(bottom, BorderLayout.SOUTH);
 
         pay.addActionListener(e -> {
-            // default: show QR screen which also allows switching to credit card
             JDialog d = new JDialog(this, "QR Payment", true);
             d.setSize(350, 300);
             d.setLayout(new BorderLayout());

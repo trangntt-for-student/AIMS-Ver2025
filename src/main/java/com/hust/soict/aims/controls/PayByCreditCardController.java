@@ -5,9 +5,9 @@ import com.hust.soict.aims.boundaries.PayPalBoundary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.awt.Desktop; // Thêm thư viện để mở trình duyệt
+import java.awt.Desktop; 
 import java.io.IOException;
-import java.net.URI;     // Thêm thư viện để mở trình duyệt
+import java.net.URI;    
 
 @Component
 public class PayByCreditCardController {
@@ -32,16 +32,17 @@ public class PayByCreditCardController {
     public String getStatus(String orderId) { return payPalBoundary.getStatus(orderId); }
 
     public boolean executePaymentFlow(double totalVND) throws Exception {
-
         JsonNode node = startPayment(totalVND);
-
+        
         String approve = null;
         for (JsonNode link : node.path("links")) {
-            if ("approve".equals(link.path("rel").asText())) approve = link.path("href").asText();
+            if ("approve".equals(link.path("rel").asText())) {
+            	approve = link.path("href").asText();
+            }
         }
+        
         String orderId = node.path("id").asText();
         if (approve == null || approve.isEmpty()) {
-            // Ném lỗi để View bắt được và hiển thị
             throw new IOException("Failed to create PayPal order (approve link missing).");
         }
 
@@ -53,7 +54,7 @@ public class PayByCreditCardController {
         while (System.currentTimeMillis() - start < 120_000) {
             String status = getStatus(orderId);
             if (status != null && status.contains("COMPLETED")) {
-                return true; // Thanh toán thành công!
+                return true; 
             }
             Thread.sleep(1000);
         }
