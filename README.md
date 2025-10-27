@@ -1,5 +1,11 @@
 # AIMS-Ver2025
 
+## Yêu cầu
+- JDK >= 17
+- Maven >= 3.9.5
+- SQLite >= 3.44.0
+- Spring Boot >= 3.1.5
+
 ## Hướng dẫn chạy code
 
 ### Clone repository về máy local
@@ -22,7 +28,7 @@ Hoặc có thể bỏ qua bước này nếu sử dụng IDE như IntelliJ IDEA 
 
 Tạo file `application.properties` trong thư mục `src/main/resources/`.
 
-Copy nội dung của file `applicationExample.properties` và dán vào file `application.properties`. Chỉnh sửa các thông tin cấu hình theo nhu cầu của bạn.
+Copy nội dung của file `application.properties.example` và dán vào file `application.properties`. Chỉnh sửa các thông tin cấu hình theo nhu cầu của bạn.
 
 Truy cập trang: https://developer.paypal.com/dashboard/ để lấy các thông tin cần thiết cho cấu hình PayPal.
 - Bước 1: Tạo tài khoản sandbox (nếu chưa có).
