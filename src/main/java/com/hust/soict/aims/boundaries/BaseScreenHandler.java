@@ -1,11 +1,19 @@
 package com.hust.soict.aims.boundaries;
 
 import javax.swing.*;
+import java.awt.*;
+
 import static com.hust.soict.aims.utils.UIConstant.*;
 
 public abstract class BaseScreenHandler extends JFrame {
     protected String screenTitle;
     protected BaseScreenHandler parentScreen;
+    
+    // Navigation buttons
+    private JButton backButton;
+    private JButton forwardButton;
+    private JPanel navigationPanel;
+    private boolean navigationEnabled = true;
      
     /**
      * Constructor with screen's title
@@ -53,16 +61,132 @@ public abstract class BaseScreenHandler extends JFrame {
         // Lifecycle hook: before initialization
         onBeforeInitialize();
         
+        // Initialize navigation buttons first
+        if (navigationEnabled) {
+            initNavigationComponents();
+        }
+        
         // Template methods for subclass to implement
         initComponents();
         setupLayout();
         bindEvents();
         
-        // Center the screen on the screen
+        // Setup navigation listener
+        if (navigationEnabled) {
+            setupNavigationListener();
+        }
+        
+        // Center the screen
         setLocationRelativeTo(null);
         
         // Lifecycle hook: after initialization
         onAfterInitialize();
+    }
+    
+    /**
+     * Initialize navigation components (Back/Forward buttons)
+     */
+    private void initNavigationComponents() {
+        backButton = new JButton("← Back");
+        backButton.setFont(FONT_BUTTON);
+        backButton.setBackground(BACKGROUND_GRAY);
+        backButton.setFocusPainted(false);
+        backButton.setCursor(CURSOR_HAND);
+        backButton.setEnabled(false);
+        
+        forwardButton = new JButton("Forward →");
+        forwardButton.setFont(FONT_BUTTON);
+        forwardButton.setBackground(BACKGROUND_GRAY);
+        forwardButton.setFocusPainted(false);
+        forwardButton.setCursor(CURSOR_HAND);
+        forwardButton.setEnabled(false);
+        
+        // Bind navigation events
+        backButton.addActionListener(e -> navigateBack());
+        forwardButton.addActionListener(e -> navigateForward());
+        
+        // Create navigation panel
+        navigationPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, SPACING_SMALL, 0));
+        navigationPanel.setOpaque(false);
+        navigationPanel.add(backButton);
+        navigationPanel.add(forwardButton);
+    }
+    
+    /**
+     * Setup navigation listener to update button states
+     */
+    private void setupNavigationListener() {
+        ScreenNavigator.getInstance().addNavigationListener((currentScreen, canGoBack, canGoForward) -> {
+            // Only update if this is the current screen
+            if (currentScreen == this) {
+                SwingUtilities.invokeLater(() -> {
+                    backButton.setEnabled(canGoBack);
+                    forwardButton.setEnabled(canGoForward);
+                });
+            }
+        });
+    }
+    
+    /**
+     * Get the navigation panel to add to screen layout
+     * Subclasses can call this to include navigation buttons in their header
+     * @return Navigation panel with Back/Forward buttons
+     */
+    protected JPanel getNavigationPanel() {
+        return navigationPanel;
+    }
+    
+    /**
+     * Create a top navigation bar (separate row for Back/Forward buttons)
+     * This creates a visually separated top bar for navigation controls
+     * @return Top navigation bar panel
+     */
+    protected JPanel createTopNavigationBar() {
+        JPanel topBar = new JPanel(new BorderLayout());
+        topBar.setBackground(BACKGROUND_GRAY);
+        topBar.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, BORDER_LIGHT),
+            PADDING_XSMALL
+        ));
+        topBar.setPreferredSize(new Dimension(0, TOP_NAV_HEIGHT));
+        
+        topBar.add(navigationPanel, BorderLayout.WEST);
+        
+        return topBar;
+    }
+    
+    /**
+     * Helper method to create a standard header structure with top navigation bar and main header
+     * @param mainHeaderContent The main header content (title, buttons, etc.)
+     * @return Panel containing top navigation bar and main header
+     */
+    protected JPanel createHeaderWithNavigation(JPanel mainHeaderContent) {
+        JPanel headerWrapper = new JPanel(new BorderLayout());
+        
+        // Top: Navigation bar
+        headerWrapper.add(createTopNavigationBar(), BorderLayout.NORTH);
+        
+        // Bottom: Main header content
+        headerWrapper.add(mainHeaderContent, BorderLayout.CENTER);
+        
+        return headerWrapper;
+    }
+    
+    /**
+     * Enable or disable navigation buttons for this screen
+     * By default, navigation is enabled. Call this in constructor before initializeScreen() to disable.
+     * @param enabled true to enable navigation, false to disable
+     */
+    protected void setNavigationEnabled(boolean enabled) {
+        this.navigationEnabled = enabled;
+    }
+    
+    /**
+     * Check if navigation is enabled for this screen
+     * @return true if navigation enabled, false otherwise
+     */
+    protected boolean isNavigationEnabled() {
+        return navigationEnabled;
     }
     
     /**

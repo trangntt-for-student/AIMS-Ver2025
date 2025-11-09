@@ -20,13 +20,10 @@ public class CartScreen extends BaseScreenHandler {
     private final PayByCreditCardController paymentController;
     private final PlaceOrderController placeController;
     
-    // UI Components
     private JPanel itemsPanel;
     private JLabel totalItemsLabel;
     private JLabel subtotalLabel;
     private JButton placeOrderButton;
-    private JButton backButton;
-    private JButton clearCartButton;
 
     public CartScreen(CartController cartController, PayByCreditCardController paymentController, 
                      BaseScreenHandler parentScreen) {
@@ -41,19 +38,6 @@ public class CartScreen extends BaseScreenHandler {
 
     @Override
     protected void initComponents() {
-        backButton = new JButton("Back");
-        backButton.setFont(FONT_BUTTON);
-        backButton.setBackground(BACKGROUND_GRAY);
-        backButton.setFocusPainted(false);
-        backButton.setCursor(CURSOR_HAND);
-        
-        clearCartButton = new JButton("Clear Cart");
-        clearCartButton.setFont(FONT_BUTTON);
-        clearCartButton.setBackground(DANGER_COLOR);
-        clearCartButton.setForeground(TEXT_ON_PRIMARY);
-        clearCartButton.setFocusPainted(false);
-        clearCartButton.setCursor(CURSOR_HAND);
-        
         itemsPanel = new JPanel();
         itemsPanel.setLayout(new BoxLayout(itemsPanel, BoxLayout.Y_AXIS));
         itemsPanel.setBackground(BACKGROUND_WHITE);
@@ -78,23 +62,22 @@ public class CartScreen extends BaseScreenHandler {
     protected void setupLayout() {
         setLayout(new BorderLayout(SPACING_SMALL, SPACING_SMALL));
 
-        // Header Panel
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBorder(PADDING_SMALL);
-        headerPanel.setBackground(PRIMARY_COLOR);
+        // Main Header Panel
+        JPanel mainHeaderPanel = new JPanel(new BorderLayout());
+        mainHeaderPanel.setBorder(PADDING_SMALL);
+        mainHeaderPanel.setBackground(PRIMARY_COLOR);
+        mainHeaderPanel.setPreferredSize(new Dimension(0, HEADER_HEIGHT));
         
+        // Center: Title
         JLabel titleLabel = new JLabel("Your Shopping Cart");
         titleLabel.setFont(FONT_TITLE);
         titleLabel.setForeground(TEXT_ON_PRIMARY);
-        headerPanel.add(titleLabel, BorderLayout.WEST);
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        mainHeaderPanel.add(titleLabel, BorderLayout.CENTER);
         
-        JPanel headerButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, SPACING_SMALL, 0));
-        headerButtonsPanel.setOpaque(false);
-        headerButtonsPanel.add(clearCartButton);
-        headerButtonsPanel.add(backButton);
-        headerPanel.add(headerButtonsPanel, BorderLayout.EAST);
-        
-        add(headerPanel, BorderLayout.NORTH);
+        // Combine top navigation bar + main header
+        JPanel headerWithNav = createHeaderWithNavigation(mainHeaderPanel);
+        add(headerWithNav, BorderLayout.NORTH);
         
         // Center Panel - Cart Items
         JScrollPane scrollPane = new JScrollPane(itemsPanel);
@@ -126,39 +109,6 @@ public class CartScreen extends BaseScreenHandler {
 
     @Override
     protected void bindEvents() {
-        // Back button
-        backButton.addActionListener(e -> {
-            dispose();
-            if (parentScreen != null) {
-                parentScreen.showScreen();
-            }
-        });
-        
-        // Clear cart button
-        clearCartButton.addActionListener(e -> {
-            if (cartController.isEmpty()) {
-                JOptionPane.showMessageDialog(this, 
-                    "Cart is already empty!", 
-                    "Cart", 
-                    JOptionPane.INFORMATION_MESSAGE);
-                return;
-            }
-
-            int confirm = JOptionPane.showConfirmDialog(this,
-                "Are you sure you want to clear all items from cart?",
-                "Clear Cart",
-                JOptionPane.YES_NO_OPTION);
-                
-            if (confirm == JOptionPane.YES_OPTION) {
-                cartController.clear();
-                refresh();
-                JOptionPane.showMessageDialog(this, 
-                    "Cart cleared successfully!", 
-                    "Cart", 
-                    JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-        
         // Place order button
         placeOrderButton.addActionListener(e -> {
             if (cartController.isEmpty()) {
@@ -169,23 +119,21 @@ public class CartScreen extends BaseScreenHandler {
                 return;
             }
             
-            // Hide CartScreen before showing DeliveryInfoScreen (SWA approach)
-            this.hideScreen();
-            
+            // Navigate to DeliveryInfoScreen
             DeliveryInfoScreen deliveryDialog = new DeliveryInfoScreen(this, cartController);
-            deliveryDialog.showScreen();
+            navigateTo(deliveryDialog);
             DeliveryInfo deliveryInfo = deliveryDialog.getDeliveryInfo();
             
             if (deliveryInfo == null) {
-                // User cancelled, CartScreen already shown by DeliveryInfoScreen
+                // User cancelled, navigation handled by ScreenNavigator
                 return;
             }
             
             PlaceOrderController.PlaceOrderResult result = placeController.placeOrder(deliveryInfo);
             
             if (!result.success) {
-                // Order failed, show CartScreen again
-                this.showScreen();
+                // Order failed, go back to CartScreen
+                navigateBack();
                 JOptionPane.showMessageDialog(this, 
                     result.message, 
                     "Order Failed", 
@@ -193,7 +141,6 @@ public class CartScreen extends BaseScreenHandler {
                 return;
             }
             
-            // Hide CartScreen before showing InvoiceScreen (SWA approach)
             // Note: InvoiceScreen is modal JDialog, so it will block until closed
             InvoiceScreen invoiceScreen = new InvoiceScreen(this, result.invoice, paymentController);
             invoiceScreen.setVisible(true);
@@ -204,16 +151,15 @@ public class CartScreen extends BaseScreenHandler {
                     "Success", 
                     JOptionPane.INFORMATION_MESSAGE);
                 cartController.clear();
-                refresh();
                 
-                dispose();
-                if (parentScreen != null) {
-                    parentScreen.showScreen();
+                // Go back to Homepage after successful payment
+                // Navigate back until we reach Homepage (currentIndex = 0)
+                while (canNavigateBack()) {
+                    navigateBack();
                 }
-            } else {
-                // Payment cancelled or failed, show CartScreen again
-                this.showScreen();
+                refresh();
             }
+            // If payment cancelled, user can use Back button to navigate
         });
     }
     
@@ -266,7 +212,6 @@ public class CartScreen extends BaseScreenHandler {
         
         // Enable/disable buttons
         placeOrderButton.setEnabled(!cartController.isEmpty());
-        clearCartButton.setEnabled(!cartController.isEmpty());
         
         // Refresh UI
         itemsPanel.revalidate();

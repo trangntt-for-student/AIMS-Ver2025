@@ -97,6 +97,10 @@ public class UIConstant {
     public static final Dimension WINDOW_SIZE_DIALOG = new Dimension(600, 500);
     public static final Dimension WINDOW_SIZE_SMALL_DIALOG = new Dimension(400, 300);
     
+    // Header Sizes
+    public static final int HEADER_HEIGHT = 60;
+    public static final int TOP_NAV_HEIGHT = 40;
+    
     // Cart Item Card Dimensions
     public static final int CART_ITEM_HEIGHT = 80;
     public static final int CART_PRODUCT_WIDTH = 400;

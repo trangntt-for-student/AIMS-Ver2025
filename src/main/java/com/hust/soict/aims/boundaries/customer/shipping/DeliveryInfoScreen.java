@@ -22,9 +22,7 @@ public class DeliveryInfoScreen extends BaseScreenHandler {
     
     private OrderSummaryPanel orderSummaryPanel;
     
-    private JButton backButton;
     private JButton confirmButton;
-    private JButton cancelButton;
     
     public DeliveryInfoScreen(BaseScreenHandler parent, CartController cartController) {
         super("Delivery Information", parent, false);
@@ -65,12 +63,6 @@ public class DeliveryInfoScreen extends BaseScreenHandler {
         orderSummaryPanel = new OrderSummaryPanel(cartController);
         
         // Buttons
-        backButton = new JButton("Back");
-        backButton.setFont(FONT_BUTTON);
-        backButton.setBackground(BACKGROUND_GRAY);
-        backButton.setFocusPainted(false);
-        backButton.setCursor(CURSOR_HAND);
-        
         confirmButton = new JButton("Confirm Order");
         confirmButton.setFont(FONT_BUTTON_LARGE);
         confirmButton.setBackground(PRIMARY_COLOR);
@@ -78,35 +70,28 @@ public class DeliveryInfoScreen extends BaseScreenHandler {
         confirmButton.setFocusPainted(false);
         confirmButton.setPreferredSize(new Dimension(180, 45));
         confirmButton.setCursor(CURSOR_HAND);
-        
-        cancelButton = new JButton("Cancel");
-        cancelButton.setFont(FONT_BUTTON);
-        cancelButton.setBackground(BACKGROUND_GRAY);
-        cancelButton.setFocusPainted(false);
-        cancelButton.setPreferredSize(new Dimension(100, 45));
-        cancelButton.setCursor(CURSOR_HAND);
     }
     
     @Override
     protected void setupLayout() {
         setLayout(new BorderLayout(SPACING_MEDIUM, SPACING_MEDIUM));
         
-        // Header
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(PRIMARY_COLOR);
-        headerPanel.setBorder(PADDING_MEDIUM);
+        // Main Header Panel (without navigation)
+        JPanel mainHeaderPanel = new JPanel(new BorderLayout());
+        mainHeaderPanel.setBackground(PRIMARY_COLOR);
+        mainHeaderPanel.setBorder(PADDING_MEDIUM);
+        mainHeaderPanel.setPreferredSize(new Dimension(0, HEADER_HEIGHT));
         
+        // Center: Title
         JLabel titleLabel = new JLabel("Delivery Information");
         titleLabel.setFont(FONT_TITLE);
         titleLabel.setForeground(TEXT_ON_PRIMARY);
-        headerPanel.add(titleLabel, BorderLayout.WEST);
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        mainHeaderPanel.add(titleLabel, BorderLayout.CENTER);
         
-        JPanel headerButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, SPACING_SMALL, 0));
-        headerButtonsPanel.setOpaque(false);
-        headerButtonsPanel.add(backButton);
-        headerPanel.add(headerButtonsPanel, BorderLayout.EAST);
-        
-        add(headerPanel, BorderLayout.NORTH);
+        // Combine top navigation bar + main header
+        JPanel headerWithNav = createHeaderWithNavigation(mainHeaderPanel);
+        add(headerWithNav, BorderLayout.NORTH);
         
         // Center: Split into form (left) and cart summary (right)
         JPanel centerPanel = new JPanel(new GridLayout(1, 2, SPACING_MEDIUM, 0));
@@ -124,7 +109,6 @@ public class DeliveryInfoScreen extends BaseScreenHandler {
         // Footer: Buttons
         JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, SPACING_MEDIUM, SPACING_MEDIUM));
         footerPanel.setBackground(BACKGROUND_LIGHT);
-        footerPanel.add(cancelButton);
         footerPanel.add(confirmButton);
         
         add(footerPanel, BorderLayout.SOUTH);
@@ -187,27 +171,8 @@ public class DeliveryInfoScreen extends BaseScreenHandler {
     
     @Override
     protected void bindEvents() {
-        // Back button
-        backButton.addActionListener(e -> {
-            deliveryInfo = null;
-            dispose();
-            if (parentScreen != null) {
-                parentScreen.showScreen();
-            }
-        });
-        
         // Confirm button
         confirmButton.addActionListener(e -> handleConfirm());
-        
-        // Cancel button
-        cancelButton.addActionListener(e -> {
-            deliveryInfo = null;
-            dispose();
-            // Show parent when cancel (SWA approach)
-            if (parentScreen != null) {
-                parentScreen.showScreen();
-            }
-        });
     }
     
     @Override
