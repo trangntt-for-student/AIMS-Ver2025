@@ -42,7 +42,7 @@ public class CartScreen extends BaseScreenHandler {
     @Override
     protected void initComponents() {
         // Header buttons
-        backButton = new JButton(ICON_BACK + " Back");
+        backButton = new JButton("Back");
         backButton.setFont(FONT_BUTTON);
         backButton.setBackground(BACKGROUND_GRAY);
         backButton.setFocusPainted(false);
@@ -87,7 +87,7 @@ public class CartScreen extends BaseScreenHandler {
         headerPanel.setBorder(PADDING_SMALL);
         headerPanel.setBackground(PRIMARY_COLOR);
         
-        JLabel titleLabel = new JLabel(ICON_CART + " Your Shopping Cart");
+        JLabel titleLabel = new JLabel("Your Shopping Cart");
         titleLabel.setFont(FONT_TITLE);
         titleLabel.setForeground(TEXT_ON_PRIMARY);
         headerPanel.add(titleLabel, BorderLayout.WEST);
@@ -173,8 +173,8 @@ public class CartScreen extends BaseScreenHandler {
                 return;
             }
             
-            DeliveryInfoScreen deliveryDialog = new DeliveryInfoScreen(this);
-            deliveryDialog.setVisible(true);
+            DeliveryInfoScreen deliveryDialog = new DeliveryInfoScreen(this, cartController);
+            deliveryDialog.showScreen();
             DeliveryInfo deliveryInfo = deliveryDialog.getDeliveryInfo();
             
             if (deliveryInfo == null) return;

@@ -110,8 +110,8 @@ public class ProductCardPanel extends JPanel {
      * Create "Info" button
      */
     private JButton createInfoButton() {
-        JButton infoButton = new JButton(ICON_INFO);
-        infoButton.setFont(FONT_BUTTON_LARGE);
+        JButton infoButton = new JButton("Info");
+        infoButton.setFont(FONT_BUTTON);
         infoButton.setBackground(BACKGROUND_GRAY);
         infoButton.setForeground(TEXT_PRIMARY);
         infoButton.setFocusPainted(false);

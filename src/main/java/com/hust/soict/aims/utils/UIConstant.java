@@ -108,16 +108,6 @@ public class UIConstant {
     public static final Cursor CURSOR_HAND = new Cursor(Cursor.HAND_CURSOR);
     public static final Cursor CURSOR_DEFAULT = new Cursor(Cursor.DEFAULT_CURSOR);
     
-    // ========== ICONS & EMOJIS ==========
-    
-    public static final String ICON_CART = "🛒";
-    public static final String ICON_BACK = "←";
-    public static final String ICON_FORWARD = "→";
-    public static final String ICON_INFO = "ℹ";
-    public static final String ICON_SUCCESS = "✓";
-    public static final String ICON_WARNING = "⚠";
-    public static final String ICON_ERROR = "✗";
-    
     // ========== GRID LAYOUT ==========
     
     public static final int PRODUCT_GRID_ROWS = 5;
