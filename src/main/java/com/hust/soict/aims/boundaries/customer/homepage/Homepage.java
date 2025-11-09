@@ -34,10 +34,7 @@ public class Homepage extends BaseScreenHandler {
         this.cart = cart;
         this.paymentController = paymentController;
         
-        // Initialize screen components and layout
         initializeScreen();
-        
-        // Override close operation: Exit app when closing Homepage (main window)
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
@@ -102,7 +99,7 @@ public class Homepage extends BaseScreenHandler {
         // Bind search events
         searchPanel.addSearchListener(searchTerm -> {
             currentSearchTerm = searchTerm;
-            paginationPanel.reset();  // Reset to first page when searching
+            paginationPanel.reset();
             refresh();
         });
         
@@ -212,6 +209,9 @@ public class Homepage extends BaseScreenHandler {
      * Open cart screen
      */
     private void openCart() {
+        // Hide Homepage before showing CartScreen (SPA approach)
+        this.hideScreen();
+        
         CartScreen cartScreen = new CartScreen(cart, paymentController, this);
         cartScreen.showScreen();
     }
