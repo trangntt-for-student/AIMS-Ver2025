@@ -13,7 +13,6 @@ public class DeliveryInfoScreen extends BaseScreenHandler {
     private final CartController cartController;
     private DeliveryInfo deliveryInfo;
     
-    // Form fields
     private JTextField nameField;
     private JTextField phoneField;
     private JTextField emailField;
@@ -21,10 +20,8 @@ public class DeliveryInfoScreen extends BaseScreenHandler {
     private JTextField districtField;
     private JTextArea addressArea;
     
-    // Order summary component
     private OrderSummaryPanel orderSummaryPanel;
     
-    // Buttons
     private JButton backButton;
     private JButton confirmButton;
     private JButton cancelButton;
@@ -32,11 +29,6 @@ public class DeliveryInfoScreen extends BaseScreenHandler {
     public DeliveryInfoScreen(BaseScreenHandler parent, CartController cartController) {
         super("Delivery Information", parent, false);
         this.cartController = cartController;
-        
-        // Set as modal dialog style
-        setSize(900, 600);
-        setModal(true);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
         initializeScreen();
     }
@@ -211,6 +203,10 @@ public class DeliveryInfoScreen extends BaseScreenHandler {
         cancelButton.addActionListener(e -> {
             deliveryInfo = null;
             dispose();
+            // Show parent when cancel (SWA approach)
+            if (parentScreen != null) {
+                parentScreen.showScreen();
+            }
         });
     }
     
@@ -273,13 +269,5 @@ public class DeliveryInfoScreen extends BaseScreenHandler {
      */
     public DeliveryInfo getDeliveryInfo() {
         return deliveryInfo;
-    }
-    
-    /**
-     * Make this window modal
-     */
-    private void setModal(boolean modal) {
-        // Note: For proper modal behavior with BaseScreenHandler,
-        // consider using JDialog instead or implement custom modal logic
     }
 }

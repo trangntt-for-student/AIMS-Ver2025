@@ -41,7 +41,6 @@ public class CartScreen extends BaseScreenHandler {
 
     @Override
     protected void initComponents() {
-        // Header buttons
         backButton = new JButton("Back");
         backButton.setFont(FONT_BUTTON);
         backButton.setBackground(BACKGROUND_GRAY);
@@ -55,20 +54,17 @@ public class CartScreen extends BaseScreenHandler {
         clearCartButton.setFocusPainted(false);
         clearCartButton.setCursor(CURSOR_HAND);
         
-        // Items panel (will contain cart item rows)
         itemsPanel = new JPanel();
         itemsPanel.setLayout(new BoxLayout(itemsPanel, BoxLayout.Y_AXIS));
         itemsPanel.setBackground(BACKGROUND_WHITE);
         
-        // Summary labels
         totalItemsLabel = new JLabel("Total Items: 0");
         totalItemsLabel.setFont(FONT_BODY);
         
         subtotalLabel = new JLabel("Subtotal: $0.00");
         subtotalLabel.setFont(FONT_HEADER);
         subtotalLabel.setForeground(INFO_COLOR);
-        
-        // Place order button
+
         placeOrderButton = new JButton("Place Order");
         placeOrderButton.setFont(FONT_BUTTON_LARGE);
         placeOrderButton.setBackground(PRIMARY_COLOR);  
@@ -81,7 +77,7 @@ public class CartScreen extends BaseScreenHandler {
     @Override
     protected void setupLayout() {
         setLayout(new BorderLayout(SPACING_SMALL, SPACING_SMALL));
-        
+
         // Header Panel
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBorder(PADDING_SMALL);
@@ -173,15 +169,23 @@ public class CartScreen extends BaseScreenHandler {
                 return;
             }
             
+            // Hide CartScreen before showing DeliveryInfoScreen (SWA approach)
+            this.hideScreen();
+            
             DeliveryInfoScreen deliveryDialog = new DeliveryInfoScreen(this, cartController);
             deliveryDialog.showScreen();
             DeliveryInfo deliveryInfo = deliveryDialog.getDeliveryInfo();
             
-            if (deliveryInfo == null) return;
+            if (deliveryInfo == null) {
+                // User cancelled, CartScreen already shown by DeliveryInfoScreen
+                return;
+            }
             
             PlaceOrderController.PlaceOrderResult result = placeController.placeOrder(deliveryInfo);
             
             if (!result.success) {
+                // Order failed, show CartScreen again
+                this.showScreen();
                 JOptionPane.showMessageDialog(this, 
                     result.message, 
                     "Order Failed", 
@@ -189,6 +193,8 @@ public class CartScreen extends BaseScreenHandler {
                 return;
             }
             
+            // Hide CartScreen before showing InvoiceScreen (SWA approach)
+            // Note: InvoiceScreen is modal JDialog, so it will block until closed
             InvoiceScreen invoiceScreen = new InvoiceScreen(this, result.invoice, paymentController);
             invoiceScreen.setVisible(true);
             
@@ -204,6 +210,9 @@ public class CartScreen extends BaseScreenHandler {
                 if (parentScreen != null) {
                     parentScreen.showScreen();
                 }
+            } else {
+                // Payment cancelled or failed, show CartScreen again
+                this.showScreen();
             }
         });
     }
@@ -244,7 +253,7 @@ public class CartScreen extends BaseScreenHandler {
     }
     
     /**
-     * Create a clean panel for each cart item with FIXED COLUMN WIDTHS
+     * Create a clean panel for each cart item
      */
     private JPanel createItemPanel(CartItem item) {
         JPanel panel = new JPanel();
@@ -256,7 +265,7 @@ public class CartScreen extends BaseScreenHandler {
         panel.setBackground(BACKGROUND_WHITE);
         panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, CART_ITEM_HEIGHT));
         
-        // Left: Product info (FIXED WIDTH)
+        // Left: Product info
         JPanel leftPanel = new JPanel(new GridLayout(2, 1, 0, SPACING_XSMALL));
         leftPanel.setOpaque(false);
         leftPanel.setPreferredSize(new Dimension(CART_PRODUCT_WIDTH, 50));
@@ -273,7 +282,7 @@ public class CartScreen extends BaseScreenHandler {
         leftPanel.add(nameLabel);
         leftPanel.add(priceLabel);
         
-        // Center: Quantity control (FIXED WIDTH)
+        // Center: Quantity control
         JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, SPACING_XSMALL, SPACING_SMALL));
         centerPanel.setOpaque(false);
         centerPanel.setPreferredSize(new Dimension(CART_QUANTITY_WIDTH, 50));
@@ -297,7 +306,7 @@ public class CartScreen extends BaseScreenHandler {
         centerPanel.add(qtyLabel);
         centerPanel.add(qtySpinner);
         
-        // Right: Subtotal and Remove button (FIXED WIDTH)
+        // Right: Subtotal and Remove button
         JPanel rightPanel = new JPanel(new GridLayout(2, 1, 0, SPACING_XSMALL));
         rightPanel.setOpaque(false);
         rightPanel.setPreferredSize(new Dimension(CART_ACTIONS_WIDTH, 50));

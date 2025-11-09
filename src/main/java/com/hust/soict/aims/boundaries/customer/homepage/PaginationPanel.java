@@ -7,10 +7,6 @@ import java.util.List;
 
 import static com.hust.soict.aims.utils.UIConstant.*;
 
-/**
- * Reusable component for pagination controls
- * Contains Previous, Page Info, and Next buttons
- */
 public class PaginationPanel extends JPanel {
     private JButton prevButton;
     private JButton nextButton;
