@@ -1,8 +1,8 @@
 package com.hust.soict.aims;
 
-import com.hust.soict.aims.boundaries.MainWindow;
 import com.hust.soict.aims.controls.PayByCreditCardController;
 import com.hust.soict.aims.controls.ProductController;
+import com.hust.soict.aims.boundaries.customer.homepage.Homepage;
 import com.hust.soict.aims.controls.CartController;
 import javax.swing.*;
 
@@ -16,7 +16,7 @@ public class App {
 			ProductController productController = new ProductController();
 			CartController cartController = new CartController();
 
-			MainWindow w = new MainWindow(productController, cartController, paymentController);
+			Homepage w = new Homepage(productController, cartController, paymentController);
 			w.setVisible(true);
 		});
 	}
