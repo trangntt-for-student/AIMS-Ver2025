@@ -16,8 +16,8 @@ public class App {
 			ProductController productController = new ProductController();
 			CartController cartController = new CartController();
 
-			Homepage w = new Homepage(productController, cartController, paymentController);
-			w.setVisible(true);
+			Homepage homepage = new Homepage(productController, cartController, paymentController);
+			homepage.showScreen();
 		});
 	}
 }
