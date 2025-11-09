@@ -5,13 +5,14 @@ import java.awt.*;
 import java.util.List;
 
 import com.hust.soict.aims.boundaries.BaseScreenHandler;
+import com.hust.soict.aims.boundaries.customer.invoice.InvoiceScreen;
 import com.hust.soict.aims.boundaries.customer.shipping.DeliveryInfoScreen;
 import com.hust.soict.aims.controls.CartController;
 import com.hust.soict.aims.controls.PayByCreditCardController;
 import com.hust.soict.aims.controls.PlaceOrderController;
 import com.hust.soict.aims.entities.CartItem;
 import com.hust.soict.aims.entities.DeliveryInfo;
-import com.hust.soict.aims.invoice.InvoiceScreen;
+
 import static com.hust.soict.aims.utils.UIConstant.*;
 
 public class CartScreen extends BaseScreenHandler {

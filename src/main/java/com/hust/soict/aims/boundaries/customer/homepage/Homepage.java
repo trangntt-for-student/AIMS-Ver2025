@@ -18,13 +18,13 @@ public class Homepage extends BaseScreenHandler {
     private final CartController cart;
     private final PayByCreditCardController paymentController;
     
-    private int currentPage = 0;
-    
     private JPanel gridPanel;
-    private JLabel pageLabel;
-    private JButton prevButton;
-    private JButton nextButton;
+    private PaginationPanel paginationPanel;
+    private ProductSearchPanel searchPanel;
     private JButton cartButton;
+    
+    // Current search term
+    private String currentSearchTerm = "";
     
     public Homepage(ProductController controller, CartController cart,
                    PayByCreditCardController paymentController) {
@@ -49,21 +49,11 @@ public class Homepage extends BaseScreenHandler {
                                           PRODUCT_GRID_HGAP, PRODUCT_GRID_VGAP));
         gridPanel.setBackground(BACKGROUND_LIGHT);
         
-        // Initialize navigation components
-        pageLabel = new JLabel();
-        pageLabel.setFont(FONT_BODY);
+        // Initialize search panel
+        searchPanel = new ProductSearchPanel();
         
-        prevButton = new JButton(ICON_BACK + " Prev");
-        prevButton.setFont(FONT_BUTTON);
-        prevButton.setBackground(BACKGROUND_GRAY);
-        prevButton.setFocusPainted(false);
-        prevButton.setCursor(CURSOR_HAND);
-        
-        nextButton = new JButton("Next " + ICON_FORWARD);
-        nextButton.setFont(FONT_BUTTON);
-        nextButton.setBackground(BACKGROUND_GRAY);
-        nextButton.setFocusPainted(false);
-        nextButton.setCursor(CURSOR_HAND);
+        // Initialize pagination panel
+        paginationPanel = new PaginationPanel();
         
         // Initialize cart button
         cartButton = new JButton(getCartButtonText());
@@ -78,6 +68,9 @@ public class Homepage extends BaseScreenHandler {
     protected void setupLayout() {
         setLayout(new BorderLayout(SPACING_SMALL, SPACING_SMALL));
         
+        // Top Panel (Header + Search)
+        JPanel topPanel = new JPanel(new BorderLayout());
+        
         // Header Panel
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(PRIMARY_COLOR);
@@ -89,7 +82,10 @@ public class Homepage extends BaseScreenHandler {
         headerPanel.add(titleLabel, BorderLayout.WEST);
         headerPanel.add(cartButton, BorderLayout.EAST);
         
-        add(headerPanel, BorderLayout.NORTH);
+        topPanel.add(headerPanel, BorderLayout.NORTH);
+        topPanel.add(searchPanel, BorderLayout.SOUTH);
+        
+        add(topPanel, BorderLayout.NORTH);
         
         // Center - Product grid with scroll
         JScrollPane scrollPane = new JScrollPane(gridPanel);
@@ -98,32 +94,21 @@ public class Homepage extends BaseScreenHandler {
         add(scrollPane, BorderLayout.CENTER);
         
         // Footer - Pagination
-        JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, SPACING_MEDIUM, SPACING_MEDIUM));
-        footerPanel.setBackground(BACKGROUND_LIGHT);
-        footerPanel.add(prevButton);
-        footerPanel.add(pageLabel);
-        footerPanel.add(nextButton);
-        
-        add(footerPanel, BorderLayout.SOUTH);
+        add(paginationPanel, BorderLayout.SOUTH);
     }
     
     @Override
     protected void bindEvents() {
-        // Bind pagination buttons
-        prevButton.addActionListener(e -> {
-            if (currentPage > 0) {
-                currentPage--;
-                refresh();
-            }
+        // Bind search events
+        searchPanel.addSearchListener(searchTerm -> {
+            currentSearchTerm = searchTerm;
+            paginationPanel.reset();  // Reset to first page when searching
+            refresh();
         });
         
-        nextButton.addActionListener(e -> {
-            int total = controller.countProducts();
-            int pages = (total - 1) / controller.getPageSize();
-            if (currentPage < pages) {
-                currentPage++;
-                refresh();
-            }
+        // Bind pagination events
+        paginationPanel.addPaginationListener(newPage -> {
+            refresh();
         });
         
         // Bind cart button
@@ -161,82 +146,55 @@ public class Homepage extends BaseScreenHandler {
     public void refresh() {
         gridPanel.removeAll();
         
-        // Load products for current page
-        List<Product> products = controller.getPage(currentPage);
+        // Get current page from pagination panel
+        int currentPage = paginationPanel.getCurrentPage();
         
-        // Create product cards with standardized style
-        for (Product p : products) {
-            JPanel card = new JPanel(new BorderLayout(SPACING_SMALL, SPACING_SMALL));
-            card.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(BORDER_LIGHT),
-                PADDING_MEDIUM
-            ));
-            card.setBackground(BACKGROUND_WHITE);
-            
-            // Product title (top)
-            JLabel titleLabel = new JLabel(p.getTitle());
-            titleLabel.setFont(FONT_PRODUCT_NAME);
-            titleLabel.setForeground(TEXT_PRIMARY);
-            card.add(titleLabel, BorderLayout.NORTH);
-            
-            // Product info (center)
-            JPanel infoPanel = new JPanel(new GridLayout(2, 1, 0, SPACING_XSMALL));
-            infoPanel.setOpaque(false);
-            
-            JLabel priceLabel = new JLabel(String.format("Price: $%.2f", p.getCurrentPrice()));
-            priceLabel.setFont(FONT_BODY);
-            priceLabel.setForeground(INFO_COLOR);
-            
-            JLabel weightLabel = new JLabel(String.format("Weight: %.2f kg", p.getWeight()));
-            weightLabel.setFont(FONT_SMALL);
-            weightLabel.setForeground(TEXT_SECONDARY);
-            
-            infoPanel.add(priceLabel);
-            infoPanel.add(weightLabel);
-            card.add(infoPanel, BorderLayout.CENTER);
-            
-            // Buttons (bottom)
-            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, SPACING_XSMALL, 0));
-            buttonPanel.setOpaque(false);
-            
-            JButton addButton = new JButton("Add");
-            addButton.setFont(FONT_BUTTON);
-            addButton.setBackground(PRIMARY_COLOR);
-            addButton.setForeground(TEXT_ON_PRIMARY);
-            addButton.setFocusPainted(false);
-            addButton.setPreferredSize(new Dimension(70, 35));
-            addButton.setCursor(CURSOR_HAND);
-            addButton.addActionListener(e -> {
-                cart.addProduct(p, 1);
-                JOptionPane.showMessageDialog(this, 
-                    "Added to cart: " + p.getTitle(), 
-                    "Cart", 
-                    JOptionPane.INFORMATION_MESSAGE);
-            });
-            
-            JButton infoButton = new JButton(ICON_INFO);
-            infoButton.setFont(FONT_BUTTON_LARGE);
-            infoButton.setBackground(BACKGROUND_GRAY);
-            infoButton.setForeground(TEXT_PRIMARY);
-            infoButton.setFocusPainted(false);
-            infoButton.setPreferredSize(BUTTON_SIZE_ICON);
-            infoButton.setCursor(CURSOR_HAND);
-            infoButton.addActionListener(e -> {
-                ProductDetailScreen detailScreen = new ProductDetailScreen(this, p);
-                detailScreen.setVisible(true);
-            });
-            
-            buttonPanel.add(addButton);
-            buttonPanel.add(infoButton);
-            card.add(buttonPanel, BorderLayout.SOUTH);
-            
-            gridPanel.add(card);
+        // Load products (search or all)
+        List<Product> products;
+        int total;
+        
+        if (currentSearchTerm.isEmpty()) {
+            // Load all products
+            products = controller.getPage(currentPage);
+            total = controller.countProducts();
+        } else {
+            // Search products
+            products = controller.searchProducts(currentSearchTerm, currentPage);
+            total = controller.countSearchResults(currentSearchTerm);
         }
         
-        // Update pagination label
-        int total = controller.countProducts();
-        int pages = Math.max(0, (total - 1) / controller.getPageSize());
-        pageLabel.setText(String.format("Page %d / %d", currentPage + 1, pages + 1));
+        // Show message if no results
+        if (products.isEmpty()) {
+            JLabel noResultsLabel = new JLabel("No products found");
+            noResultsLabel.setFont(FONT_HEADER);
+            noResultsLabel.setForeground(TEXT_SECONDARY);
+            noResultsLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            gridPanel.setLayout(new BorderLayout());
+            gridPanel.add(noResultsLabel, BorderLayout.CENTER);
+        } else {
+            // Restore grid layout if needed
+            if (!(gridPanel.getLayout() instanceof GridLayout)) {
+                gridPanel.setLayout(new GridLayout(PRODUCT_GRID_ROWS, PRODUCT_GRID_COLS, 
+                                                  PRODUCT_GRID_HGAP, PRODUCT_GRID_VGAP));
+            }
+            
+            // Create product cards using ProductCardPanel component
+            for (Product product : products) {
+                ProductCardPanel card = new ProductCardPanel(product, cart, this);
+                
+                // Set callback for info button
+                card.setOnViewInfo(e -> {
+                    ProductDetailScreen detailScreen = new ProductDetailScreen(this, product);
+                    detailScreen.setVisible(true);
+                });
+                
+                gridPanel.add(card);
+            }
+        }
+        
+        // Update pagination
+        int totalPages = Math.max(1, (total + controller.getPageSize() - 1) / controller.getPageSize());
+        paginationPanel.setCurrentPage(currentPage, totalPages);
         
         // Refresh UI
         gridPanel.revalidate();

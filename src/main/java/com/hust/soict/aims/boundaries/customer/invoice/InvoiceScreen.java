@@ -1,4 +1,4 @@
-package com.hust.soict.aims.invoice;
+package com.hust.soict.aims.boundaries.customer.invoice;
 
 import javax.swing.*;
 import java.awt.*;
