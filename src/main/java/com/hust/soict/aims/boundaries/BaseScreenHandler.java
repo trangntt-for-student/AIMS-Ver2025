@@ -1,15 +1,12 @@
 package com.hust.soict.aims.boundaries;
 
 import javax.swing.*;
-import java.awt.*;
+import static com.hust.soict.aims.utils.UIConstant.*;
 
 public abstract class BaseScreenHandler extends JFrame {
     protected String screenTitle;
-    protected static final int WIDTH = 1000;
-    protected static final int HEIGHT = 800;
-    protected static final Font FONT = new Font("Times New Roman", Font.PLAIN, 12);
     protected BaseScreenHandler parentScreen;
-    
+     
     /**
      * Constructor with screen's title
      * @param title screen's title
@@ -50,9 +47,8 @@ public abstract class BaseScreenHandler extends JFrame {
      */
     protected void initializeScreen() {
         setTitle(screenTitle);
-        setSize(WIDTH, HEIGHT);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
-        setFont(FONT);
+        setSize(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
         // Lifecycle hook: before initialization
         onBeforeInitialize();

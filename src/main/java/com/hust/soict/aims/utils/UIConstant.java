@@ -91,7 +91,9 @@ public class UIConstant {
     public static final Dimension INPUT_SIZE_LARGE = new Dimension(250, 35);
     
     // Window Sizes
-    public static final Dimension WINDOW_SIZE_DEFAULT = new Dimension(1000, 800);
+    public static final int DEFAULT_SCREEN_WIDTH = 1000;
+    public static final int DEFAULT_SCREEN_HEIGHT = 800;
+    public static final Dimension WINDOW_SIZE_DEFAULT = new Dimension(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
     public static final Dimension WINDOW_SIZE_DIALOG = new Dimension(600, 500);
     public static final Dimension WINDOW_SIZE_SMALL_DIALOG = new Dimension(400, 300);
     

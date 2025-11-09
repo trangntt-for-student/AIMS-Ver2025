@@ -8,6 +8,14 @@ import java.util.*;
 public class Database {
     private static final String DB_FILE = "aims.db";
     private static final String URL = "jdbc:sqlite:" + DB_FILE;
+    
+    /**
+     * Functional interface for setting PreparedStatement parameters
+     */
+    @FunctionalInterface
+    private interface PreparedStatementSetter {
+        void set(PreparedStatement ps) throws SQLException;
+    }
 
     public static void initDatabase() {
         try (Connection conn = DriverManager.getConnection(URL)) {
@@ -149,11 +157,52 @@ public class Database {
     }
 
     public static List<Product> getProducts(int offset, int limit) {
-        List<Product> list = new ArrayList<>();
-        String q = "SELECT id,type,title,originalValue,currentPrice,weight,dimension,description,extra FROM products ORDER BY id LIMIT ? OFFSET ?";
+        return queryProducts("SELECT id,type,title,originalValue,currentPrice,weight,dimension,description,extra FROM products ORDER BY id LIMIT ? OFFSET ?", 
+                            stmt -> {
+                                stmt.setInt(1, limit);
+                                stmt.setInt(2, offset);
+                            });
+    }
+    
+    /**
+     * Search products by title (case-insensitive)
+     * @param searchTerm Search term to match against product title
+     * @param offset Starting offset
+     * @param limit Maximum number of results
+     * @return List of matching products
+     */
+    public static List<Product> searchProducts(String searchTerm, int offset, int limit) {
+        return queryProducts("SELECT id,type,title,originalValue,currentPrice,weight,dimension,description,extra FROM products WHERE LOWER(title) LIKE ? ORDER BY id LIMIT ? OFFSET ?",
+                            stmt -> {
+                                stmt.setString(1, "%" + searchTerm.toLowerCase() + "%");
+                                stmt.setInt(2, limit);
+                                stmt.setInt(3, offset);
+                            });
+    }
+    
+    /**
+     * Count products matching search term
+     * @param searchTerm Search term
+     * @return Count of matching products
+     */
+    public static int countSearchResults(String searchTerm) {
+        String q = "SELECT COUNT(*) FROM products WHERE LOWER(title) LIKE ?";
         try (Connection conn = DriverManager.getConnection(URL); PreparedStatement ps = conn.prepareStatement(q)) {
-            ps.setInt(1, limit);
-            ps.setInt(2, offset);
+            ps.setString(1, "%" + searchTerm.toLowerCase() + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+        return 0;
+    }
+    
+    /**
+     * Helper method to execute product query with custom PreparedStatement setup
+     */
+    private static List<Product> queryProducts(String sql, PreparedStatementSetter setter) {
+        List<Product> list = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(URL); PreparedStatement ps = conn.prepareStatement(sql)) {
+            setter.set(ps);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     long id = rs.getLong("id");
