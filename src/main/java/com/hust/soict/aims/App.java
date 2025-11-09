@@ -1,10 +1,12 @@
 package com.hust.soict.aims;
 
+import javax.swing.*;
+
 import com.hust.soict.aims.controls.PayByCreditCardController;
 import com.hust.soict.aims.controls.ProductController;
 import com.hust.soict.aims.boundaries.customer.homepage.Homepage;
+import com.hust.soict.aims.boundaries.ScreenNavigator;
 import com.hust.soict.aims.controls.CartController;
-import javax.swing.*;
 
 public class App {
 	public static void main(String[] args) {
@@ -17,7 +19,8 @@ public class App {
 			CartController cartController = new CartController();
 
 			Homepage homepage = new Homepage(productController, cartController, paymentController);
-			homepage.showScreen();
+		
+			ScreenNavigator.getInstance().navigateTo(homepage);
 		});
 	}
 }

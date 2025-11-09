@@ -34,6 +34,9 @@ public class Homepage extends BaseScreenHandler {
         this.cart = cart;
         this.paymentController = paymentController;
         
+        // Disable navigation for Homepage
+        setNavigationEnabled(false);
+        
         initializeScreen();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
@@ -72,6 +75,7 @@ public class Homepage extends BaseScreenHandler {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(PRIMARY_COLOR);
         headerPanel.setBorder(PADDING_MEDIUM);
+        headerPanel.setPreferredSize(new Dimension(0, HEADER_HEIGHT));
         
         JLabel titleLabel = new JLabel("AIMS - Product Store");
         titleLabel.setFont(FONT_TITLE);
@@ -209,10 +213,7 @@ public class Homepage extends BaseScreenHandler {
      * Open cart screen
      */
     private void openCart() {
-        // Hide Homepage before showing CartScreen (SPA approach)
-        this.hideScreen();
-        
         CartScreen cartScreen = new CartScreen(cart, paymentController, this);
-        cartScreen.showScreen();
+        navigateTo(cartScreen);
     }
 }
