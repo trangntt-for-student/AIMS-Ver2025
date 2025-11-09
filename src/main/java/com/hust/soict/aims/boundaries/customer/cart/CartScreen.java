@@ -1,14 +1,16 @@
-package com.hust.soict.aims.boundaries;
+package com.hust.soict.aims.boundaries.customer.cart;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+import com.hust.soict.aims.boundaries.customer.shipping.DeliveryInfoScreen;
 import com.hust.soict.aims.controls.CartController;
 import com.hust.soict.aims.controls.PayByCreditCardController;
 import com.hust.soict.aims.controls.PlaceOrderController;
 import com.hust.soict.aims.entities.CartItem;
 import com.hust.soict.aims.entities.DeliveryInfo;
+import com.hust.soict.aims.invoice.InvoiceScreen;
 
 
 public class CartScreen extends JFrame {

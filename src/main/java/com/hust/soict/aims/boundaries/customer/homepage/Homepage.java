@@ -1,33 +1,37 @@
-package com.hust.soict.aims.boundaries;
+package com.hust.soict.aims.boundaries.customer.homepage;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import com.hust.soict.aims.controls.ProductController;
 import com.hust.soict.aims.controls.PayByCreditCardController;
+import com.hust.soict.aims.boundaries.ProductDetailScreen;
+import com.hust.soict.aims.boundaries.customer.cart.CartScreen;
+import com.hust.soict.aims.controls.CartController;
 import com.hust.soict.aims.entities.Product;
 
-
-public class MainWindow extends JFrame {
+public class Homepage extends JFrame {
     private final ProductController controller;
-    private final com.hust.soict.aims.controls.CartController cart;
+    private final CartController cart;
     private final PayByCreditCardController paymentController;
     private int currentPage = 0;
     private JLabel pageLabel;
     private JPanel gridPanel;
-    public MainWindow(ProductController controller, com.hust.soict.aims.controls.CartController cart,
+    public Homepage(ProductController controller, com.hust.soict.aims.controls.CartController cart,
                    PayByCreditCardController paymentController) {
         super("AIMS - Products");
+        setFont(new Font("Times New Roman", Font.PLAIN, 12));
+        setTitle("AIMS - Homepage");
         this.controller = controller;
         this.cart = cart;
         this.paymentController = paymentController;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(900, 700);
-        setLayout(new BorderLayout());
+        getContentPane().setLayout(new BorderLayout());
 
         gridPanel = new JPanel();
         gridPanel.setLayout(new GridLayout(5, 4, 10, 10));
-        add(new JScrollPane(gridPanel), BorderLayout.CENTER);
+        getContentPane().add(new JScrollPane(gridPanel), BorderLayout.CENTER);
 
         JPanel bottom = new JPanel(new BorderLayout());
         JPanel nav = new JPanel();
@@ -36,7 +40,7 @@ public class MainWindow extends JFrame {
         pageLabel = new JLabel();
         nav.add(prev); nav.add(pageLabel); nav.add(next);
         bottom.add(nav, BorderLayout.CENTER);
-        add(bottom, BorderLayout.SOUTH);
+        getContentPane().add(bottom, BorderLayout.SOUTH);
 
         prev.addActionListener(e -> { if (currentPage>0) { currentPage--; refresh(); } });
         next.addActionListener(e -> { int total = controller.countProducts(); int pages = (total-1)/controller.getPageSize(); if (currentPage<pages) { currentPage++; refresh(); } });
@@ -48,6 +52,7 @@ public class MainWindow extends JFrame {
         JMenuBar mb = new JMenuBar();
         mb.add(Box.createHorizontalGlue());
         JButton cartBtn = new JButton("\uD83D\uDED2 (" + cart.getTotalQuantity() + ")");
+        cartBtn.setFont(new Font("Tahoma", Font.BOLD, 12));
         cartBtn.addActionListener(e -> {
             if (cart.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Cart is empty", "Cart", JOptionPane.INFORMATION_MESSAGE);
