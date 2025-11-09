@@ -229,10 +229,31 @@ public class CartScreen extends BaseScreenHandler {
         
         List<CartItem> items = cartController.getItems();
         
-        // Add each cart item as a panel
+        // Add each cart item using CartItemPanel component
         for (CartItem item : items) {
-            JPanel itemRow = createItemPanel(item);
-            itemsPanel.add(itemRow);
+            CartItemPanel itemPanel = new CartItemPanel(item);
+            
+            // Set callback for quantity change
+            itemPanel.setOnQuantityChanged(e -> {
+                int newQty = itemPanel.getCurrentQuantity();
+                cartController.updateQuantity(item.getProduct().getId(), newQty);
+                refresh();
+            });
+            
+            // Set callback for remove button
+            itemPanel.setOnRemove(e -> {
+                int confirm = JOptionPane.showConfirmDialog(this,
+                    "Remove " + item.getProduct().getTitle() + " from cart?",
+                    "Remove Item",
+                    JOptionPane.YES_NO_OPTION);
+                    
+                if (confirm == JOptionPane.YES_OPTION) {
+                    cartController.remove(item.getProduct().getId());
+                    refresh();
+                }
+            });
+            
+            itemsPanel.add(itemPanel);
             itemsPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         }
         
@@ -250,104 +271,5 @@ public class CartScreen extends BaseScreenHandler {
         // Refresh UI
         itemsPanel.revalidate();
         itemsPanel.repaint();
-    }
-    
-    /**
-     * Create a clean panel for each cart item
-     */
-    private JPanel createItemPanel(CartItem item) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        panel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(BORDER_LIGHT),
-            PADDING_MEDIUM
-        ));
-        panel.setBackground(BACKGROUND_WHITE);
-        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, CART_ITEM_HEIGHT));
-        
-        // Left: Product info
-        JPanel leftPanel = new JPanel(new GridLayout(2, 1, 0, SPACING_XSMALL));
-        leftPanel.setOpaque(false);
-        leftPanel.setPreferredSize(new Dimension(CART_PRODUCT_WIDTH, 50));
-        leftPanel.setMinimumSize(new Dimension(CART_PRODUCT_WIDTH, 50));
-        leftPanel.setMaximumSize(new Dimension(CART_PRODUCT_WIDTH, 50));
-        
-        JLabel nameLabel = new JLabel(item.getProduct().getTitle());
-        nameLabel.setFont(FONT_PRODUCT_NAME);
-        
-        JLabel priceLabel = new JLabel(String.format("Price: $%.2f", item.getProduct().getCurrentPrice()));
-        priceLabel.setFont(FONT_SMALL);
-        priceLabel.setForeground(TEXT_SECONDARY);
-        
-        leftPanel.add(nameLabel);
-        leftPanel.add(priceLabel);
-        
-        // Center: Quantity control
-        JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, SPACING_XSMALL, SPACING_SMALL));
-        centerPanel.setOpaque(false);
-        centerPanel.setPreferredSize(new Dimension(CART_QUANTITY_WIDTH, 50));
-        centerPanel.setMinimumSize(new Dimension(CART_QUANTITY_WIDTH, 50));
-        centerPanel.setMaximumSize(new Dimension(CART_QUANTITY_WIDTH, 50));
-        
-        JLabel qtyLabel = new JLabel("Qty:");
-        qtyLabel.setFont(FONT_SMALL);
-        qtyLabel.setPreferredSize(new Dimension(35, 25));
-        qtyLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        
-        JSpinner qtySpinner = new JSpinner(new SpinnerNumberModel(item.getQuantity(), 1, 100, 1));
-        qtySpinner.setPreferredSize(INPUT_SIZE_SMALL);
-        qtySpinner.setFont(FONT_BODY);
-        qtySpinner.addChangeListener(e -> {
-            int newQty = (Integer) qtySpinner.getValue();
-            cartController.updateQuantity(item.getProduct().getId(), newQty);
-            refresh();
-        });
-        
-        centerPanel.add(qtyLabel);
-        centerPanel.add(qtySpinner);
-        
-        // Right: Subtotal and Remove button
-        JPanel rightPanel = new JPanel(new GridLayout(2, 1, 0, SPACING_XSMALL));
-        rightPanel.setOpaque(false);
-        rightPanel.setPreferredSize(new Dimension(CART_ACTIONS_WIDTH, 50));
-        rightPanel.setMinimumSize(new Dimension(CART_ACTIONS_WIDTH, 50));
-        rightPanel.setMaximumSize(new Dimension(CART_ACTIONS_WIDTH, 50));
-        
-        JLabel subtotalLabel = new JLabel(String.format("$%.2f", 
-            item.getProduct().getCurrentPrice() * item.getQuantity()));
-        subtotalLabel.setFont(FONT_BUTTON_LARGE);
-        subtotalLabel.setForeground(INFO_COLOR);
-        subtotalLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        
-        JButton removeButton = new JButton("Remove");
-        removeButton.setPreferredSize(BUTTON_SIZE_MEDIUM);
-        removeButton.setBackground(DANGER_COLOR);
-        removeButton.setForeground(TEXT_ON_PRIMARY);
-        removeButton.setFont(FONT_BUTTON);
-        removeButton.setFocusPainted(false);
-        removeButton.setCursor(CURSOR_HAND);
-        removeButton.addActionListener(e -> {
-            int confirm = JOptionPane.showConfirmDialog(this,
-                "Remove " + item.getProduct().getTitle() + " from cart?",
-                "Remove Item",
-                JOptionPane.YES_NO_OPTION);
-                
-            if (confirm == JOptionPane.YES_OPTION) {
-                cartController.remove(item.getProduct().getId());
-                refresh();
-            }
-        });
-        
-        rightPanel.add(subtotalLabel);
-        rightPanel.add(removeButton);
-        
-        // Add all sections with proper spacing
-        panel.add(leftPanel);
-        panel.add(Box.createRigidArea(new Dimension(SPACING_MEDIUM, 0)));
-        panel.add(centerPanel);
-        panel.add(Box.createHorizontalGlue());
-        panel.add(rightPanel);
-        
-        return panel;
     }
 }
