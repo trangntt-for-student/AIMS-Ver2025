@@ -76,7 +76,7 @@ public class Homepage extends BaseScreenHandler {
         headerPanel.setBackground(PRIMARY_COLOR);
         headerPanel.setBorder(PADDING_MEDIUM);
         
-        JLabel titleLabel = new JLabel(ICON_CART + " AIMS - Product Store");
+        JLabel titleLabel = new JLabel("AIMS - Product Store");
         titleLabel.setFont(FONT_TITLE);
         titleLabel.setForeground(TEXT_ON_PRIMARY);
         headerPanel.add(titleLabel, BorderLayout.WEST);
@@ -205,7 +205,7 @@ public class Homepage extends BaseScreenHandler {
      * Get cart button text with icon and item count
      */
     private String getCartButtonText() {
-        return String.format(ICON_CART + " (%d)", cart.getTotalQuantity());
+        return String.format("Cart (%d)", cart.getTotalQuantity());
     }
     
     /**

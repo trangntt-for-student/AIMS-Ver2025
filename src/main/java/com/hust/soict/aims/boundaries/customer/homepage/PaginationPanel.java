@@ -45,7 +45,7 @@ public class PaginationPanel extends JPanel {
         setBackground(BACKGROUND_LIGHT);
         
         // Previous button
-        prevButton = new JButton(ICON_BACK + " Prev");
+        prevButton = new JButton("Prev");
         prevButton.setFont(FONT_BUTTON);
         prevButton.setBackground(BACKGROUND_GRAY);
         prevButton.setFocusPainted(false);
@@ -57,7 +57,7 @@ public class PaginationPanel extends JPanel {
         pageLabel.setFont(FONT_BODY);
         
         // Next button
-        nextButton = new JButton("Next " + ICON_FORWARD);
+        nextButton = new JButton("Next");
         nextButton.setFont(FONT_BUTTON);
         nextButton.setBackground(BACKGROUND_GRAY);
         nextButton.setFocusPainted(false);
