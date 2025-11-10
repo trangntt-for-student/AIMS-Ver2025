@@ -56,7 +56,7 @@ public abstract class BaseScreenHandler extends JFrame {
     protected void initializeScreen() {
         setTitle(screenTitle);
         setSize(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         // Lifecycle hook: before initialization
         onBeforeInitialize();

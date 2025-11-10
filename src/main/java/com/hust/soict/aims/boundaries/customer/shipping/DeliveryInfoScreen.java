@@ -5,12 +5,18 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 import com.hust.soict.aims.boundaries.BaseScreenHandler;
+import com.hust.soict.aims.boundaries.customer.invoice.InvoiceScreen;
 import com.hust.soict.aims.entities.DeliveryInfo;
 import com.hust.soict.aims.controls.CartController;
+import com.hust.soict.aims.controls.PlaceOrderController;
+import com.hust.soict.aims.controls.PayByCreditCardController;
+
 import static com.hust.soict.aims.utils.UIConstant.*;
 
 public class DeliveryInfoScreen extends BaseScreenHandler {
     private final CartController cartController;
+    private final PlaceOrderController placeOrderController;
+    private final PayByCreditCardController paymentController;
     private DeliveryInfo deliveryInfo;
     
     private JTextField nameField;
@@ -24,9 +30,13 @@ public class DeliveryInfoScreen extends BaseScreenHandler {
     
     private JButton confirmButton;
     
-    public DeliveryInfoScreen(BaseScreenHandler parent, CartController cartController) {
+    public DeliveryInfoScreen(BaseScreenHandler parent, CartController cartController, 
+                             PlaceOrderController placeOrderController,
+                             PayByCreditCardController paymentController) {
         super("Delivery Information", parent, false);
         this.cartController = cartController;
+        this.placeOrderController = placeOrderController;
+        this.paymentController = paymentController;
         
         initializeScreen();
     }
@@ -226,7 +236,20 @@ public class DeliveryInfoScreen extends BaseScreenHandler {
         deliveryInfo.setDistrict(districtField.getText().trim());
         deliveryInfo.setAddressLine(address);
         
-        dispose();
+        // Place order
+        PlaceOrderController.PlaceOrderResult result = placeOrderController.placeOrder(deliveryInfo);
+        
+        if (!result.success) {
+            JOptionPane.showMessageDialog(this, 
+                result.message, 
+                "Order Failed", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Navigate to InvoiceScreen
+        InvoiceScreen invoiceScreen = new InvoiceScreen(this, result.invoice, paymentController, cartController);
+        navigateTo(invoiceScreen);
     }
     
     /**

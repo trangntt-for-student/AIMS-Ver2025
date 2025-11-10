@@ -38,7 +38,6 @@ public class Homepage extends BaseScreenHandler {
         setNavigationEnabled(false);
         
         initializeScreen();
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
     @Override
