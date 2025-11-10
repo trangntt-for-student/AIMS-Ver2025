@@ -5,20 +5,17 @@ import java.awt.*;
 import java.util.List;
 
 import com.hust.soict.aims.boundaries.BaseScreenHandler;
-import com.hust.soict.aims.boundaries.customer.invoice.InvoiceScreen;
 import com.hust.soict.aims.boundaries.customer.shipping.DeliveryInfoScreen;
 import com.hust.soict.aims.controls.CartController;
 import com.hust.soict.aims.controls.PayByCreditCardController;
 import com.hust.soict.aims.controls.PlaceOrderController;
 import com.hust.soict.aims.entities.CartItem;
-import com.hust.soict.aims.entities.DeliveryInfo;
 
 import static com.hust.soict.aims.utils.UIConstant.*;
 
 public class CartScreen extends BaseScreenHandler {
     private final CartController cartController;
     private final PayByCreditCardController paymentController;
-    private final PlaceOrderController placeController;
     
     private JPanel itemsPanel;
     private JLabel totalItemsLabel;
@@ -26,12 +23,11 @@ public class CartScreen extends BaseScreenHandler {
     private JButton placeOrderButton;
 
     public CartScreen(CartController cartController, PayByCreditCardController paymentController, 
-                     BaseScreenHandler parentScreen) {
-        super("Shopping Cart", parentScreen, false);
+                     BaseScreenHandler parent) {
+        super("Shopping Cart", parent, false);
         
         this.cartController = cartController;
         this.paymentController = paymentController;
-        this.placeController = new PlaceOrderController(cartController);
         
         initializeScreen();
     }
@@ -120,46 +116,8 @@ public class CartScreen extends BaseScreenHandler {
             }
             
             // Navigate to DeliveryInfoScreen
-            DeliveryInfoScreen deliveryDialog = new DeliveryInfoScreen(this, cartController);
-            navigateTo(deliveryDialog);
-            DeliveryInfo deliveryInfo = deliveryDialog.getDeliveryInfo();
-            
-            if (deliveryInfo == null) {
-                // User cancelled, navigation handled by ScreenNavigator
-                return;
-            }
-            
-            PlaceOrderController.PlaceOrderResult result = placeController.placeOrder(deliveryInfo);
-            
-            if (!result.success) {
-                // Order failed, go back to CartScreen
-                navigateBack();
-                JOptionPane.showMessageDialog(this, 
-                    result.message, 
-                    "Order Failed", 
-                    JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            // Note: InvoiceScreen is modal JDialog, so it will block until closed
-            InvoiceScreen invoiceScreen = new InvoiceScreen(this, result.invoice, paymentController);
-            invoiceScreen.setVisible(true);
-            
-            if (invoiceScreen.isPaid()) {
-                JOptionPane.showMessageDialog(this, 
-                    "Payment successful! Thank you for your order.", 
-                    "Success", 
-                    JOptionPane.INFORMATION_MESSAGE);
-                cartController.clear();
-                
-                // Go back to Homepage after successful payment
-                // Navigate back until we reach Homepage (currentIndex = 0)
-                while (canNavigateBack()) {
-                    navigateBack();
-                }
-                refresh();
-            }
-            // If payment cancelled, user can use Back button to navigate
+            DeliveryInfoScreen deliveryInfoScreen = new DeliveryInfoScreen(this, cartController, new PlaceOrderController(cartController), paymentController);
+            navigateTo(deliveryInfoScreen);
         });
     }
     
