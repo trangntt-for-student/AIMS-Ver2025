@@ -9,14 +9,12 @@ import com.hust.soict.aims.boundaries.customer.invoice.InvoiceScreen;
 import com.hust.soict.aims.entities.DeliveryInfo;
 import com.hust.soict.aims.controls.CartController;
 import com.hust.soict.aims.controls.PlaceOrderController;
-import com.hust.soict.aims.controls.PayByCreditCardController;
 
 import static com.hust.soict.aims.utils.UIConstant.*;
 
 public class DeliveryInfoScreen extends BaseScreenHandler {
     private final CartController cartController;
     private final PlaceOrderController placeOrderController;
-    private final PayByCreditCardController paymentController;
     private DeliveryInfo deliveryInfo;
     
     private JTextField nameField;
@@ -31,12 +29,10 @@ public class DeliveryInfoScreen extends BaseScreenHandler {
     private JButton confirmButton;
     
     public DeliveryInfoScreen(BaseScreenHandler parent, CartController cartController, 
-                             PlaceOrderController placeOrderController,
-                             PayByCreditCardController paymentController) {
+                             PlaceOrderController placeOrderController) {
         super("Delivery Information", parent, false);
         this.cartController = cartController;
         this.placeOrderController = placeOrderController;
-        this.paymentController = paymentController;
         
         initializeScreen();
     }
@@ -78,7 +74,7 @@ public class DeliveryInfoScreen extends BaseScreenHandler {
         confirmButton.setBackground(PRIMARY_COLOR);
         confirmButton.setForeground(TEXT_ON_PRIMARY);
         confirmButton.setFocusPainted(false);
-        confirmButton.setPreferredSize(new Dimension(180, 45));
+        confirmButton.setPreferredSize(BUTTON_SIZE_LARGE);
         confirmButton.setCursor(CURSOR_HAND);
     }
     
@@ -248,7 +244,7 @@ public class DeliveryInfoScreen extends BaseScreenHandler {
         }
         
         // Navigate to InvoiceScreen
-        InvoiceScreen invoiceScreen = new InvoiceScreen(this, result.invoice, paymentController, cartController);
+        InvoiceScreen invoiceScreen = new InvoiceScreen(this, result.invoice, cartController);
         navigateTo(invoiceScreen);
     }
     

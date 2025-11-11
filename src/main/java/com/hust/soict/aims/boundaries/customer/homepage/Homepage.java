@@ -5,7 +5,6 @@ import java.awt.*;
 import java.util.List;
 
 import com.hust.soict.aims.controls.ProductController;
-import com.hust.soict.aims.controls.PayByCreditCardController;
 import com.hust.soict.aims.boundaries.BaseScreenHandler;
 import com.hust.soict.aims.boundaries.ProductDetailScreen;
 import com.hust.soict.aims.boundaries.customer.cart.CartScreen;
@@ -14,9 +13,8 @@ import com.hust.soict.aims.entities.Product;
 import static com.hust.soict.aims.utils.UIConstant.*;
 
 public class Homepage extends BaseScreenHandler {
-    private final ProductController controller;
-    private final CartController cart;
-    private final PayByCreditCardController paymentController;
+    private final ProductController productController;
+    private final CartController cartController;
     
     private JPanel gridPanel;
     private PaginationPanel paginationPanel;
@@ -26,13 +24,11 @@ public class Homepage extends BaseScreenHandler {
     // Current search term
     private String currentSearchTerm = "";
     
-    public Homepage(ProductController controller, CartController cart,
-                   PayByCreditCardController paymentController) {
+    public Homepage(ProductController productController, CartController cartController) {
         super("AIMS - Homepage", null, false);
         
-        this.controller = controller;
-        this.cart = cart;
-        this.paymentController = paymentController;
+        this.productController = productController;
+        this.cartController = cartController;
         
         // Disable navigation for Homepage
         setNavigationEnabled(false);
@@ -113,7 +109,7 @@ public class Homepage extends BaseScreenHandler {
         
         // Bind cart button
         cartButton.addActionListener(e -> {
-            if (cart.isEmpty()) {
+            if (cartController.isEmpty()) {
                 JOptionPane.showMessageDialog(this, 
                     "Cart is empty", 
                     "Cart", 
@@ -124,7 +120,7 @@ public class Homepage extends BaseScreenHandler {
         });
         
         // Subscribe to cart changes to update cart button
-        cart.setChangeListener(count -> {
+        cartController.setChangeListener(count -> {
             SwingUtilities.invokeLater(() -> {
                 cartButton.setText(getCartButtonText());
             });
@@ -155,12 +151,12 @@ public class Homepage extends BaseScreenHandler {
         
         if (currentSearchTerm.isEmpty()) {
             // Load all products
-            products = controller.getPage(currentPage);
-            total = controller.countProducts();
+            products = productController.getPage(currentPage);
+            total = productController.countProducts();
         } else {
             // Search products
-            products = controller.searchProducts(currentSearchTerm, currentPage);
-            total = controller.countSearchResults(currentSearchTerm);
+            products = productController.searchProducts(currentSearchTerm, currentPage);
+            total = productController.countSearchResults(currentSearchTerm);
         }
         
         // Show message if no results
@@ -180,7 +176,7 @@ public class Homepage extends BaseScreenHandler {
             
             // Create product cards using ProductCardPanel component
             for (Product product : products) {
-                ProductCardPanel card = new ProductCardPanel(product, cart, this);
+                ProductCardPanel card = new ProductCardPanel(product, cartController, this);
                 
                 // Set callback for info button
                 card.setOnViewInfo(e -> {
@@ -193,7 +189,7 @@ public class Homepage extends BaseScreenHandler {
         }
         
         // Update pagination
-        int totalPages = Math.max(1, (total + controller.getPageSize() - 1) / controller.getPageSize());
+        int totalPages = Math.max(1, (total + productController.getPageSize() - 1) / productController.getPageSize());
         paginationPanel.setCurrentPage(currentPage, totalPages);
         
         // Refresh UI
@@ -205,14 +201,14 @@ public class Homepage extends BaseScreenHandler {
      * Get cart button text with icon and item count
      */
     private String getCartButtonText() {
-        return String.format("Cart (%d)", cart.getTotalQuantity());
+        return String.format("Cart (%d)", cartController.getTotalQuantity());
     }
     
     /**
      * Open cart screen
      */
     private void openCart() {
-        CartScreen cartScreen = new CartScreen(cart, paymentController, this);
+        CartScreen cartScreen = new CartScreen(cartController, this);
         navigateTo(cartScreen);
     }
 }
