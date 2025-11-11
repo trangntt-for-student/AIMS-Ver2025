@@ -7,7 +7,6 @@ import java.util.List;
 import com.hust.soict.aims.boundaries.BaseScreenHandler;
 import com.hust.soict.aims.boundaries.customer.shipping.DeliveryInfoScreen;
 import com.hust.soict.aims.controls.CartController;
-import com.hust.soict.aims.controls.PayByCreditCardController;
 import com.hust.soict.aims.controls.PlaceOrderController;
 import com.hust.soict.aims.entities.CartItem;
 
@@ -15,19 +14,16 @@ import static com.hust.soict.aims.utils.UIConstant.*;
 
 public class CartScreen extends BaseScreenHandler {
     private final CartController cartController;
-    private final PayByCreditCardController paymentController;
     
     private JPanel itemsPanel;
     private JLabel totalItemsLabel;
     private JLabel subtotalLabel;
     private JButton placeOrderButton;
 
-    public CartScreen(CartController cartController, PayByCreditCardController paymentController, 
-                     BaseScreenHandler parent) {
+    public CartScreen(CartController cartController, BaseScreenHandler parent) {
         super("Shopping Cart", parent, false);
         
         this.cartController = cartController;
-        this.paymentController = paymentController;
         
         initializeScreen();
     }
@@ -116,7 +112,11 @@ public class CartScreen extends BaseScreenHandler {
             }
             
             // Navigate to DeliveryInfoScreen
-            DeliveryInfoScreen deliveryInfoScreen = new DeliveryInfoScreen(this, cartController, new PlaceOrderController(cartController), paymentController);
+            DeliveryInfoScreen deliveryInfoScreen = new DeliveryInfoScreen(
+                this, 
+                cartController, 
+                new PlaceOrderController(cartController)
+            );
             navigateTo(deliveryInfoScreen);
         });
     }
