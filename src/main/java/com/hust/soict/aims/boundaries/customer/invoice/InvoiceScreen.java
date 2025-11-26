@@ -6,6 +6,9 @@ import java.awt.*;
 import java.util.List;
 
 import com.hust.soict.aims.boundaries.BaseScreenHandler;
+import com.hust.soict.aims.boundaries.customer.payment.PaymentScreen;
+import com.hust.soict.aims.controls.PlaceOrderController;
+import com.hust.soict.aims.controls.CartController;
 import com.hust.soict.aims.entities.Invoice;
 import com.hust.soict.aims.entities.CartItem;
 
@@ -14,14 +17,19 @@ import static com.hust.soict.aims.utils.UIConstant.*;
 public class InvoiceScreen extends BaseScreenHandler {
     private boolean paid = false;
     private final Invoice invoice;
+    private final PlaceOrderController placeOrderController;
+    private final CartController cartController;
     
     private JPanel invoiceDetailsPanel;
     private JButton payButton;
 
-    public InvoiceScreen(BaseScreenHandler parent, Invoice invoice) {
+    public InvoiceScreen(BaseScreenHandler parent, Invoice invoice, 
+                        PlaceOrderController placeOrderController, CartController cartController) {
         super("Invoice & Payment", parent, false);
         
         this.invoice = invoice;
+        this.placeOrderController = placeOrderController;
+        this.cartController = cartController;
         
         initializeScreen();
     }
@@ -118,7 +126,13 @@ public class InvoiceScreen extends BaseScreenHandler {
     
     @Override
     protected void bindEvents() {
-        // TODO: Bind events for pay button (navigate to QRCodeScreen)
+        payButton.addActionListener(e -> {
+            // Navigate to PaymentScreen
+            PaymentScreen paymentScreen = new PaymentScreen(
+                this, invoice, placeOrderController, cartController
+            );
+            navigateTo(paymentScreen);
+        });
     }
 
     public boolean isPaid() { 

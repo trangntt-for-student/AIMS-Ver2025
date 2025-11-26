@@ -1,7 +1,13 @@
+# server port for embedded Tomcat
+server.port=8080
+
 # PayPal sandbox config
-# PayPal sandbox settings (provided)
 paypal.mode=sandbox
 paypal.clientId=YOUR_SANDBOX_CLIENT_ID
 paypal.clientSecret=YOUR_SANDBOX_CLIENT_SECRET
-# server port for embedded Tomcat
-server.port=8080
+
+# VietQR test environment config
+# Get these from VietQR after registration https://vietqr.vn/merchant/request
+vietqr.username=customer-vietqrtest-user2468
+vietqr.password=customer-vietqrtest-user2468=
+vietqr.apiUrl=https://dev.vietqr.org/vqr/api
