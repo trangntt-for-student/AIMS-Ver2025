@@ -243,8 +243,10 @@ public class DeliveryInfoScreen extends BaseScreenHandler {
             return;
         }
         
-        // Navigate to InvoiceScreen
-        InvoiceScreen invoiceScreen = new InvoiceScreen(this, result.invoice);
+        // Navigate to InvoiceScreen (pass PlaceOrderController and CartController)
+        InvoiceScreen invoiceScreen = new InvoiceScreen(
+            this, result.invoice, placeOrderController, cartController
+        );
         navigateTo(invoiceScreen);
     }
     
