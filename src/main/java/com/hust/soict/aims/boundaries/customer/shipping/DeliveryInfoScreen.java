@@ -232,8 +232,8 @@ public class DeliveryInfoScreen extends BaseScreenHandler {
         deliveryInfo.setDistrict(districtField.getText().trim());
         deliveryInfo.setAddressLine(address);
         
-        // Place order
-        PlaceOrderController.PlaceOrderResult result = placeOrderController.placeOrder(deliveryInfo);
+        // Create order and invoice (stock will be reduced after payment)
+        PlaceOrderController.PlaceOrderResult result = placeOrderController.placeOrder(cartController, deliveryInfo);
         
         if (!result.success) {
             JOptionPane.showMessageDialog(this, 
@@ -244,7 +244,7 @@ public class DeliveryInfoScreen extends BaseScreenHandler {
         }
         
         // Navigate to InvoiceScreen
-        InvoiceScreen invoiceScreen = new InvoiceScreen(this, result.invoice, cartController);
+        InvoiceScreen invoiceScreen = new InvoiceScreen(this, result.invoice);
         navigateTo(invoiceScreen);
     }
     

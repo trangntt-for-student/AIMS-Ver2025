@@ -69,7 +69,7 @@ public class Homepage extends BaseScreenHandler {
         // Header Panel
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(PRIMARY_COLOR);
-        headerPanel.setBorder(PADDING_MEDIUM);
+        headerPanel.setBorder(PADDING_SMALL);
         headerPanel.setPreferredSize(new Dimension(0, HEADER_HEIGHT));
         
         JLabel titleLabel = new JLabel("AIMS - Product Store");

@@ -6,9 +6,7 @@ import java.awt.*;
 import java.util.List;
 
 import com.hust.soict.aims.boundaries.BaseScreenHandler;
-import com.hust.soict.aims.controls.CartController;
 import com.hust.soict.aims.entities.Invoice;
-// import com.hust.soict.aims.utils.ServiceProvider;
 import com.hust.soict.aims.entities.CartItem;
 
 import static com.hust.soict.aims.utils.UIConstant.*;
@@ -16,16 +14,14 @@ import static com.hust.soict.aims.utils.UIConstant.*;
 public class InvoiceScreen extends BaseScreenHandler {
     private boolean paid = false;
     private final Invoice invoice;
-    private final CartController cartController;
     
     private JPanel invoiceDetailsPanel;
     private JButton payButton;
 
-    public InvoiceScreen(BaseScreenHandler parent, Invoice invoice, CartController cartController) {
+    public InvoiceScreen(BaseScreenHandler parent, Invoice invoice) {
         super("Invoice & Payment", parent, false);
         
         this.invoice = invoice;
-        this.cartController = cartController;
         
         initializeScreen();
     }

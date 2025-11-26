@@ -115,7 +115,7 @@ public class CartScreen extends BaseScreenHandler {
             DeliveryInfoScreen deliveryInfoScreen = new DeliveryInfoScreen(
                 this, 
                 cartController, 
-                new PlaceOrderController(cartController)
+                new PlaceOrderController()
             );
             navigateTo(deliveryInfoScreen);
         });
