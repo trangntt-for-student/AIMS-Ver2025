@@ -67,5 +67,29 @@ public class ConfigLoader {
     public static String getVietQRPassword() {
         return getProperty("vietqr.password", "customer-vietqrtest-user2468=");
     }
+    
+    /**
+     * Get VietQR bank account number (for receiving payments)
+     * Field name: bankAccount (as per VietQR API docs)
+     */
+    public static String getVietQRBankAccount() {
+        return getProperty("vietqr.accountNo", "9704198526191432198");
+    }
+    
+    /**
+     * Get VietQR account holder name (no diacritics)
+     * Field name: userBankName (as per VietQR API docs)
+     */
+    public static String getVietQRUserBankName() {
+        return getProperty("vietqr.accountName", "NGUYEN VAN A");
+    }
+    
+    /**
+     * Get VietQR bank code (e.g., "MB", "970415")
+     * Field name: bankCode (as per VietQR API docs)
+     */
+    public static String getVietQRBankCode() {
+        return getProperty("vietqr.bankCode", "970415");
+    }
 }
 

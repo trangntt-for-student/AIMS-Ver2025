@@ -11,7 +11,6 @@ public class PlaceOrderController {
     private List<CartItem> orderItems;
     private double subtotal;
     private double totalWeight;
- 
     
     /**
      * Result class for operations that can fail
@@ -157,7 +156,6 @@ public class PlaceOrderController {
     }
     
     /**
-     * PUBLIC API: Complete the order after payment confirmation
      * This method:
      * 1. Re-validates stock availability
      * 2. Reduces stock from database
@@ -194,7 +192,6 @@ public class PlaceOrderController {
     }
     
     /**
-     * PUBLIC API: Create and prepare order for payment
      * This method:
      * 1. Validates stock availability
      * 2. Creates order with delivery information

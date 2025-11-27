@@ -79,4 +79,3 @@ public class QRAccessTokenResponse {
         return accessToken != null && !accessToken.isEmpty();
     }
 }
-

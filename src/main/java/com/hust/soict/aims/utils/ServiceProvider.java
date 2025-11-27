@@ -34,10 +34,16 @@ public class ServiceProvider {
     public void initialize(PayByCreditCardController creditCardController) {
         this.creditCardController = creditCardController;
         
-        // Initialize QR payment controller with credentials from config
+        // Initialize QR payment controller with credentials and bank account info from config
         String vietqrUsername = ConfigLoader.getVietQRUsername();
         String vietqrPassword = ConfigLoader.getVietQRPassword();
-        this.qrPaymentController = new VietQRController(vietqrUsername, vietqrPassword);
+        String bankCode = ConfigLoader.getVietQRBankCode();
+        String bankAccount = ConfigLoader.getVietQRBankAccount();
+        String userBankName = ConfigLoader.getVietQRUserBankName();
+        
+        this.qrPaymentController = new VietQRController(
+            vietqrUsername, vietqrPassword, bankCode, bankAccount, userBankName
+        );
     }
     
     /**

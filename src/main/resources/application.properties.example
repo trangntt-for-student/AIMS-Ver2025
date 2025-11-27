@@ -11,3 +11,11 @@ paypal.clientSecret=YOUR_SANDBOX_CLIENT_SECRET
 vietqr.username=customer-vietqrtest-user2468
 vietqr.password=customer-vietqrtest-user2468=
 vietqr.apiUrl=https://dev.vietqr.org/vqr/api
+
+# VietQR bank account info for receiving payments
+# accountNo = bankAccount (account number)
+# accountName = userBankName (account holder name, no diacritics)
+# bankCode = bank code (e.g., "MB" for Military Bank, "970415" for VietinBank)
+vietqr.accountNo=9704198526191432198
+vietqr.accountName=NGUYEN VAN A
+vietqr.bankCode=970415

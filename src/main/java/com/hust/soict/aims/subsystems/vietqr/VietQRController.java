@@ -20,15 +20,19 @@ public class VietQRController implements IPaymentQRCode {
     private final String vietqrUsername;
     private final String vietqrPassword;
     
-    /**
-     * Create VietQRController with credentials
-     * @param username VietQR username from config
-     * @param password VietQR password from config
-     */
-    public VietQRController(String username, String password) {
+    // Bank account info for receiving payments (as per VietQR API docs)
+    private final String bankCode;
+    private final String accountNo;   
+    private final String accountName;
+    
+    public VietQRController(String username, String password, String bankCode,
+                           String bankAccount, String userBankName) {
         this.boundary = new VietQRBoundary();
         this.vietqrUsername = username;
         this.vietqrPassword = password;
+        this.bankCode = bankCode;
+        this.accountNo = bankAccount;
+        this.accountName = userBankName;
     }
     
     /**
@@ -54,7 +58,7 @@ public class VietQRController implements IPaymentQRCode {
             
             QRAccessTokenResponse response = new QRAccessTokenResponse();
             response.parseResponseString(responseString);
-            
+          
             if (response.isValid()) {
                 this.accessToken = response.getAccessToken();
                 this.tokenExpiryTime = currentTime + (response.getExpiresIn() * 1000L);
@@ -62,7 +66,10 @@ public class VietQRController implements IPaymentQRCode {
             } else {
                 throw new UnknownException("Failed to get valid access token");
             }
+        } catch (PaymentException e) {
+            throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new UnknownException("Failed to get access token: " + e.getMessage(), e);
         }
     }
@@ -88,7 +95,12 @@ public class VietQRController implements IPaymentQRCode {
                 .sum();
             long amount = (long) (subtotal + order.getShippingFee());
             
-            QRGenerateRequest request = new QRGenerateRequest(content, amount, order.getId());
+            // Create request with bank info from config
+            // Constructor params: bankCode, bankAccount, userBankName, content, amount, orderId
+            QRGenerateRequest request = new QRGenerateRequest(
+                bankCode, accountNo, accountName,
+                content, amount, order.getId()
+            );
             String requestString = request.buildRequestString();
             
             // Call VietQR API with Bearer token
@@ -97,8 +109,7 @@ public class VietQRController implements IPaymentQRCode {
             // Parse response and create QRCode entity
             QRCode qrCode = parseQRCodeResponse(response);
             
-            return qrCode;
-            
+            return qrCode;        
         } catch (Exception e) {
             throw new UnknownException("Failed to generate QR code: " + e.getMessage(), e);
         }
@@ -140,22 +151,36 @@ public class VietQRController implements IPaymentQRCode {
         QRCode qrCode = new QRCode();
         
         if (response != null) {
-            // Extract qrDataURL (base64 image)
-            if (response.contains("qrDataURL")) {
-                int start = response.indexOf("\"qrDataURL\":\"") + 13;
+            // Extract qrCode (EMV QR code string)
+            if (response.contains("\"qrCode\":\"")) {
+                int start = response.indexOf("\"qrCode\":\"") + 10;
                 int end = response.indexOf("\"", start);
-                if (start > 12 && end > start) {
-                    qrCode.setQrCode(response.substring(start, end));
+                if (start > 9 && end > start) {
+                    String qrCodeString = response.substring(start, end);
+                    qrCode.setQrCode(qrCodeString);
                 }
             }
             
-            // Set default bank info (from VietQR)
-            qrCode.setBankCode("VCB");
-            qrCode.setBankName("Vietcombank");
-            qrCode.setBankAccount("9704198526191432198");
+            // Extract bank info from response
+            extractJsonField(response, "bankCode", qrCode::setBankCode);
+            extractJsonField(response, "bankName", qrCode::setBankName);
+            extractJsonField(response, "bankAccount", qrCode::setBankAccount);
         }
         
         return qrCode;
     }
+    
+    /**
+     * Extract JSON field value (simple string extraction)
+     */
+    private void extractJsonField(String json, String fieldName, java.util.function.Consumer<String> setter) {
+        String searchKey = "\"" + fieldName + "\":\"";
+        if (json.contains(searchKey)) {
+            int start = json.indexOf(searchKey) + searchKey.length();
+            int end = json.indexOf("\"", start);
+            if (start > searchKey.length() - 1 && end > start) {
+                setter.accept(json.substring(start, end));
+            }
+        }
+    }
 }
-

@@ -11,7 +11,7 @@ import java.net.http.HttpResponse;
  * Handles HTTP requests to VietQR service
  */
 public class VietQRBoundary {
-    private static final String GET_TOKEN_URL = "https://api.vietqr.org/vqr/api/token_generate";
+    private static final String GET_TOKEN_URL = "https://dev.vietqr.org/vqr/api/token_generate";
     private static final String GENERATE_QR_URL = "https://dev.vietqr.org/vqr/api/qr/generate-customer";
     private static final String TEST_CALLBACK_URL = "https://dev.vietqr.org/vqr/bank/api/test/transaction-callback";
     
@@ -32,12 +32,12 @@ public class VietQRBoundary {
     public String getAccessToken(String authorizationHeader) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(GET_TOKEN_URL))
-                .header("Content-Type", "application/json")
                 .header("Authorization", authorizationHeader)
-                .POST(HttpRequest.BodyPublishers.noBody())  // No body needed, only Basic Auth
+                .POST(HttpRequest.BodyPublishers.ofString(""))  // Empty body
                 .build();
         
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
         return response.body();
     }
     
@@ -58,6 +58,7 @@ public class VietQRBoundary {
                 .build();
         
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        
         return response.body();
     }
     
@@ -78,7 +79,7 @@ public class VietQRBoundary {
                 .build();
         
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        
         return response.body();
     }
 }
-
