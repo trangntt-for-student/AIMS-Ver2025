@@ -6,10 +6,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-/**
- * Boundary layer for VietQR API communication
- * Handles HTTP requests to VietQR service
- */
 public class VietQRBoundary {
     private static final String GET_TOKEN_URL = "https://dev.vietqr.org/vqr/api/token_generate";
     private static final String GENERATE_QR_URL = "https://dev.vietqr.org/vqr/api/qr/generate-customer";
@@ -33,7 +29,7 @@ public class VietQRBoundary {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(GET_TOKEN_URL))
                 .header("Authorization", authorizationHeader)
-                .POST(HttpRequest.BodyPublishers.ofString(""))  // Empty body
+                .POST(HttpRequest.BodyPublishers.ofString(""))
                 .build();
         
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());

@@ -1,9 +1,5 @@
 package com.hust.soict.aims.subsystems.vietqr;
 
-/**
- * Request for generating VietQR code
- * Based on official API documentation: https://api.vietqr.vn/vi/api-vietqr-callback/goi-api-generate-vietqr-code
- */
 public class QRGenerateRequest {
     private String bankCode;
     private String bankAccount;

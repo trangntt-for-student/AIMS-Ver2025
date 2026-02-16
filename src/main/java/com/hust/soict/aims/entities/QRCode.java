@@ -20,26 +20,56 @@ public class QRCode {
         this.bankAccount = bankAccount;
     }
     
-    // Getters and Setters
     public String getQrCode() { return qrCode; }
-    public void setQrCode(String qrCode) { this.qrCode = qrCode; }
     
     public String getQrLink() { return qrLink; }
-    public void setQrLink(String qrLink) { this.qrLink = qrLink; }
     
     public String getBankCode() { return bankCode; }
-    public void setBankCode(String bankCode) { this.bankCode = bankCode; }
     
     public String getBankName() { return bankName; }
-    public void setBankName(String bankName) { this.bankName = bankName; }
     
     public String getBankAccount() { return bankAccount; }
-    public void setBankAccount(String bankAccount) { this.bankAccount = bankAccount; }
     
     @Override
     public String toString() {
         return String.format("QRCode{bankName='%s', bankCode='%s', account='%s'}", 
             bankName, bankCode, bankAccount);
     }
-}
+    
+    public void parseQRCodeResponse(String response) {
+        if (response == null || response.isBlank()) {
+            return;
+        }
 
+        this.qrCode = extractField(response, "qrCode");
+        this.qrLink = extractField(response, "qrLink");
+        this.bankCode = extractField(response, "bankCode");
+        this.bankName = extractField(response, "bankName");
+        this.bankAccount = extractField(response, "bankAccount");
+    }
+
+    /**
+     * Extract string field value from simple JSON response.
+     */
+    private static String extractField(String json, String fieldName) {
+
+        String key = "\"" + fieldName + "\"";
+
+        int keyIndex = json.indexOf(key);
+        if (keyIndex < 0) return null;
+
+        int colonIndex = json.indexOf(":", keyIndex);
+        if (colonIndex < 0) return null;
+
+        int valueStart = json.indexOf("\"", colonIndex);
+        if (valueStart < 0) return null;
+
+        valueStart++; // skip opening quote
+
+        int valueEnd = json.indexOf("\"", valueStart);
+        if (valueEnd < 0) return null;
+
+        return json.substring(valueStart, valueEnd);
+    }
+
+}

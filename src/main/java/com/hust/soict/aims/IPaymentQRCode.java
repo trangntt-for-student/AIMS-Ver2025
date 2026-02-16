@@ -1,14 +1,10 @@
-package com.hust.soict.aims.controls;
+package com.hust.soict.aims;
 
 import com.hust.soict.aims.entities.Order;
 import com.hust.soict.aims.entities.QRCode;
 import com.hust.soict.aims.exceptions.PaymentException;
 import com.hust.soict.aims.entities.PaymentStatus;
 
-/**
- * Interface for QR Code payment processing
- * Decouples PlaceOrderController from specific payment implementation
- */
 public interface IPaymentQRCode {
     
     /**

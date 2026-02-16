@@ -1,14 +1,5 @@
 package com.hust.soict.aims.subsystems.vietqr;
 
-/**
- * Response containing access token from VietQR
- * Response format:
- * {
- *   "access_token": "eyJhbGciOiJIUzUxMiJ9...",
- *   "token_type": "Bearer",
- *   "expires_in": 300
- * }
- */
 public class QRAccessTokenResponse {
     private String accessToken;
     private String tokenType;
@@ -25,7 +16,6 @@ public class QRAccessTokenResponse {
             return;
         }
         
-        // Simple JSON parsing (in production, use Jackson or Gson)
         // Extract access_token
         if (responseString.contains("access_token")) {
             int start = responseString.indexOf("\"access_token\":\"") + 16;

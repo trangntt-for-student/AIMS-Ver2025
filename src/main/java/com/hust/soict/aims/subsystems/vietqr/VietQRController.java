@@ -1,16 +1,12 @@
 package com.hust.soict.aims.subsystems.vietqr;
 
-import com.hust.soict.aims.controls.IPaymentQRCode;
+import java.io.IOException;
+import com.hust.soict.aims.IPaymentQRCode;
 import com.hust.soict.aims.entities.Order;
 import com.hust.soict.aims.entities.QRCode;
-import com.hust.soict.aims.exceptions.PaymentException;
-import com.hust.soict.aims.exceptions.UnknownException;
 import com.hust.soict.aims.entities.PaymentStatus;
+import com.hust.soict.aims.exceptions.*;
 
-/**
- * Controller implementing VietQR payment subsystem
- * Implements IPaymentQRCode interface
- */
 public class VietQRController implements IPaymentQRCode {
     private final VietQRBoundary boundary;
     private String accessToken;
@@ -41,36 +37,37 @@ public class VietQRController implements IPaymentQRCode {
      * @return Valid access token
      * @throws PaymentException if token generation fails
      */
-    private String getValidAccessToken() throws PaymentException {
+    private synchronized String getValidAccessToken() throws PaymentException {
         long currentTime = System.currentTimeMillis();
         
         // Check if token is still valid (with 30 seconds buffer)
-        if (accessToken != null && currentTime < tokenExpiryTime - 30000) {
-            return accessToken;
+        if (this.accessToken != null && currentTime < tokenExpiryTime - 30000) {
+            return this.accessToken;
         }
         
-        // Get new token
         try {
-            QRAccessTokenRequest request = new QRAccessTokenRequest(vietqrUsername, vietqrPassword);
-            String authHeader = request.buildAuthorizationHeader();
-            
-            String responseString = boundary.getAccessToken(authHeader);
-            
-            QRAccessTokenResponse response = new QRAccessTokenResponse();
-            response.parseResponseString(responseString);
-          
-            if (response.isValid()) {
-                this.accessToken = response.getAccessToken();
-                this.tokenExpiryTime = currentTime + (response.getExpiresIn() * 1000L);
-                return this.accessToken;
-            } else {
-                throw new UnknownException("Failed to get valid access token");
-            }
-        } catch (PaymentException e) {
-            throw e;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new UnknownException("Failed to get access token: " + e.getMessage(), e);
+			// Get new token
+			QRAccessTokenRequest request = new QRAccessTokenRequest(vietqrUsername, vietqrPassword);
+			String authHeader = request.buildAuthorizationHeader();
+
+			String responseString = boundary.getAccessToken(authHeader);
+
+			QRAccessTokenResponse response = new QRAccessTokenResponse();
+			response.parseResponseString(responseString);
+			
+			if (!response.isValid()) {
+				throw new InvalidTokenException("Failed to get valid access token");
+			}
+
+			this.accessToken = response.getAccessToken();
+			this.tokenExpiryTime = System.currentTimeMillis() + (response.getExpiresIn() * 1000L);
+			
+			return this.accessToken;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new UnknownException("Thread interrupted", e);
+        } catch (IOException e) {
+        	throw new UnknownException("Error while fetching access token", e);
         }
     }
     
@@ -85,33 +82,27 @@ public class VietQRController implements IPaymentQRCode {
         try {
             // Get valid access token
             String token = getValidAccessToken();
+
+            long amount = (long) order.getTotalAmount();
+            String orderId = order.getId();
             
-            // Create request
-            String content = "ORDER " + order.getId();
-            
-            // Calculate total amount (items + shipping)
-            double subtotal = order.getItems().stream()
-                .mapToDouble(item -> item.getProduct().getCurrentPrice() * item.getQuantity())
-                .sum();
-            long amount = (long) (subtotal + order.getShippingFee());
+            String content = "ORDER " + orderId;
             
             // Create request with bank info from config
-            // Constructor params: bankCode, bankAccount, userBankName, content, amount, orderId
             QRGenerateRequest request = new QRGenerateRequest(
                 bankCode, accountNo, accountName,
-                content, amount, order.getId()
+                content, amount, orderId
             );
             String requestString = request.buildRequestString();
             
-            // Call VietQR API with Bearer token
             String response = boundary.generateQRCode(token, requestString);
             
-            // Parse response and create QRCode entity
-            QRCode qrCode = parseQRCodeResponse(response);
+            QRCode qrCode = new QRCode();
+            qrCode.parseQRCodeResponse(response);
             
             return qrCode;        
         } catch (Exception e) {
-            throw new UnknownException("Failed to generate QR code: " + e.getMessage(), e);
+            throw new UnknownException("Failed to generate QR code: ", e);
         }
     }
     
@@ -138,49 +129,6 @@ public class VietQRController implements IPaymentQRCode {
             
         } catch (Exception e) {
             throw new UnknownException("Failed to check payment status: " + e.getMessage(), e);
-        }
-    }
-    
-    /**
-     * Parse VietQR API response to QRCode entity
-     * @param response JSON response from VietQR
-     * @return QRCode object
-     */
-    private QRCode parseQRCodeResponse(String response) {
-        // Simple JSON parsing (in production, use Jackson or Gson)
-        QRCode qrCode = new QRCode();
-        
-        if (response != null) {
-            // Extract qrCode (EMV QR code string)
-            if (response.contains("\"qrCode\":\"")) {
-                int start = response.indexOf("\"qrCode\":\"") + 10;
-                int end = response.indexOf("\"", start);
-                if (start > 9 && end > start) {
-                    String qrCodeString = response.substring(start, end);
-                    qrCode.setQrCode(qrCodeString);
-                }
-            }
-            
-            // Extract bank info from response
-            extractJsonField(response, "bankCode", qrCode::setBankCode);
-            extractJsonField(response, "bankName", qrCode::setBankName);
-            extractJsonField(response, "bankAccount", qrCode::setBankAccount);
-        }
-        
-        return qrCode;
-    }
-    
-    /**
-     * Extract JSON field value (simple string extraction)
-     */
-    private void extractJsonField(String json, String fieldName, java.util.function.Consumer<String> setter) {
-        String searchKey = "\"" + fieldName + "\":\"";
-        if (json.contains(searchKey)) {
-            int start = json.indexOf(searchKey) + searchKey.length();
-            int end = json.indexOf("\"", start);
-            if (start > searchKey.length() - 1 && end > start) {
-                setter.accept(json.substring(start, end));
-            }
         }
     }
 }

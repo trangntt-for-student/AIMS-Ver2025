@@ -2,10 +2,6 @@ package com.hust.soict.aims.subsystems.vietqr;
 
 import java.util.Base64;
 
-/**
- * Request for getting VietQR access token
- * Uses Basic Authentication (username:password encoded in Base64)
- */
 public class QRAccessTokenRequest {
     private String username;
     private String password;

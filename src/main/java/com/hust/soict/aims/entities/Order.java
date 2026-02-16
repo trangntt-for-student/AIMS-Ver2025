@@ -9,16 +9,33 @@ public class Order {
     private DeliveryInfo deliveryInfo;
     private double shippingFee;
     private LocalDateTime createdAt;
+    private static final double TAX = 0.1;
 
     public Order() { this.createdAt = LocalDateTime.now(); }
 
     public String getId() { return id; }
+    
     public void setId(String id) { this.id = id; }
+    
     public List<CartItem> getItems() { return items; }
+    
     public void setItems(List<CartItem> items) { this.items = items; }
+    
     public DeliveryInfo getDeliveryInfo() { return deliveryInfo; }
+    
     public void setDeliveryInfo(DeliveryInfo deliveryInfo) { this.deliveryInfo = deliveryInfo; }
+    
     public double getShippingFee() { return shippingFee; }
+    
     public void setShippingFee(double shippingFee) { this.shippingFee = shippingFee; }
+    
     public LocalDateTime getCreatedAt() { return createdAt; }
+    
+    public double getTotalAmount() {
+    	double subtotal = items.stream()
+    			.mapToDouble(item -> item.getProduct().getCurrentPrice() * item.getQuantity())
+                .sum();
+        long amount = (long) (subtotal + getShippingFee());
+        return amount + amount * TAX;
+    }
 }

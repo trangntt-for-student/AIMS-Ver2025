@@ -1,5 +1,6 @@
 package com.hust.soict.aims.controls;
 
+import com.hust.soict.aims.IPaymentQRCode;
 import com.hust.soict.aims.entities.Order;
 import com.hust.soict.aims.entities.QRCode;
 import com.hust.soict.aims.exceptions.PaymentException;
