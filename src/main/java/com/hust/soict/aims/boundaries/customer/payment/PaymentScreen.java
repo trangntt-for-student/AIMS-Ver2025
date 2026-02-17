@@ -4,25 +4,20 @@ import javax.swing.*;
 import java.awt.*;
 
 import com.hust.soict.aims.boundaries.BaseScreenHandler;
-import com.hust.soict.aims.controls.PayOrderController;
 import com.hust.soict.aims.controls.PlaceOrderController;
+import com.hust.soict.aims.controls.PayOrderController;
 import com.hust.soict.aims.controls.CartController;
 import com.hust.soict.aims.entities.Invoice;
 import com.hust.soict.aims.entities.QRCode;
 import com.hust.soict.aims.entities.Order;
-import com.hust.soict.aims.entities.PaymentStatus;
 import com.hust.soict.aims.utils.ServiceProvider;
-
 import static com.hust.soict.aims.utils.UIConstant.*;
 
-/**
- * Screen for processing payment via QR code or credit card
- * Displays QR code and handles payment confirmation
- */
 public class PaymentScreen extends BaseScreenHandler {
     private final Invoice invoice;
     private final CartController cartController;
-    private PayOrderController payOrderController;
+    private final PlaceOrderController placeOrderController;
+    private final PayOrderController payOrderController;
     
     private JPanel qrPanel;
     private JLabel qrImageLabel;
@@ -42,12 +37,8 @@ public class PaymentScreen extends BaseScreenHandler {
         
         this.invoice = invoice;
         this.cartController = cartController;
-        
-        // Initialize PayOrderController
-        this.payOrderController = new PayOrderController(
-            ServiceProvider.getInstance().getQRPaymentController(),
-            placeOrderController
-        );
+        this.placeOrderController = placeOrderController;
+        this.payOrderController = placeOrderController.getPayOrderController();
         
         initializeScreen();
     }
@@ -159,9 +150,6 @@ public class PaymentScreen extends BaseScreenHandler {
         add(footerPanel, BorderLayout.SOUTH);
     }
     
-    /**
-     * Build QR display panel with QR code and payment info
-     */
     private void buildQRDisplayPanel() {
         qrPanel.removeAll();
         
@@ -206,7 +194,7 @@ public class PaymentScreen extends BaseScreenHandler {
         SwingWorker<QRCode, Void> worker = new SwingWorker<>() {
             @Override
             protected QRCode doInBackground() throws Exception {
-                Order order = invoice.getOrder();
+                Order order = placeOrderController.getCurrentOrder();
                 return payOrderController.generatePaymentQR(order);
             }
             
@@ -259,7 +247,7 @@ public class PaymentScreen extends BaseScreenHandler {
         amountLabel.setText(String.format("Amount: $%.2f", invoice.getTotal()));
         
         // Update order ID
-        orderIdLabel.setText("Order: " + invoice.getOrder().getId());
+        orderIdLabel.setText("Order: " + placeOrderController.getCurrentOrder().getId());
         
         qrPanel.revalidate();
         qrPanel.repaint();
@@ -403,7 +391,7 @@ public class PaymentScreen extends BaseScreenHandler {
     @Override
     protected void bindEvents() {
         // Confirm QR payment
-        confirmQRButton.addActionListener(e -> handleQRPayment());
+        confirmQRButton.addActionListener(e -> handleQRCodePayment());
         
         // Credit card payment
         creditCardButton.addActionListener(e -> handleCreditCardPayment());
@@ -412,10 +400,7 @@ public class PaymentScreen extends BaseScreenHandler {
         cancelButton.addActionListener(e -> navigateBack());
     }
     
-    /**
-     * Handle QR payment confirmation
-     */
-    private void handleQRPayment() {
+    private void handleQRCodePayment() {
         int confirm = JOptionPane.showConfirmDialog(this,
             "Have you completed the payment via QR code?",
             "Confirm Payment",
@@ -426,9 +411,6 @@ public class PaymentScreen extends BaseScreenHandler {
         }
     }
     
-    /**
-     * Handle credit card payment
-     */
     private void handleCreditCardPayment() {
         try {
             boolean success = ServiceProvider.getInstance()
@@ -452,40 +434,11 @@ public class PaymentScreen extends BaseScreenHandler {
         }
     }
     
-    /**
-     * Complete order after successful payment
-     */
     private void processPaymentCompletion() {
-        // Step 1: Check payment status first
-        try {
-            Order order = invoice.getOrder();
-            PaymentStatus paymentStatus = payOrderController.checkPaymentStatus(order);
-            
-            System.out.println("[PaymentScreen] Payment status: " + paymentStatus);
-            
-            // For QR payment, we trust user confirmation (status may still be PENDING)
-            // In production, you might want to wait for COMPLETED status
-            if (paymentStatus.isFailed() || paymentStatus.isCancelled()) {
-                JOptionPane.showMessageDialog(this,
-                    "Payment failed: " + paymentStatus.getMessage(),
-                    "Payment Failed",
-                    JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-        } catch (Exception e) {
-            System.err.println("[PaymentScreen] Error checking payment status: " + e.getMessage());
-            // Continue with order completion even if status check fails
-            // (user has confirmed payment manually)
-        }
-        
-        // Step 2: Complete order (reduce stock, finalize)
-        PlaceOrderController.PlaceOrderResult result = payOrderController.completeOrder();
+        PlaceOrderController.PlaceOrderResult result = placeOrderController.payOrder();
         
         if (result.success) {
             paid = true;
-            
-            // Clear cart after successful payment
             cartController.clear();
             
             JOptionPane.showMessageDialog(this,

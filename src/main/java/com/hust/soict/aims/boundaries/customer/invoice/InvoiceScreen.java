@@ -11,7 +11,6 @@ import com.hust.soict.aims.controls.PlaceOrderController;
 import com.hust.soict.aims.controls.CartController;
 import com.hust.soict.aims.entities.Invoice;
 import com.hust.soict.aims.entities.CartItem;
-
 import static com.hust.soict.aims.utils.UIConstant.*;
 
 public class InvoiceScreen extends BaseScreenHandler {
@@ -80,7 +79,7 @@ public class InvoiceScreen extends BaseScreenHandler {
         itemsContainer.setBackground(BACKGROUND_WHITE);
         
         // Add each item using InvoiceItemPanel
-        List<CartItem> items = invoice.getOrder().getItems();
+        List<CartItem> items = placeOrderController.getCurrentOrder().getItems();
         for (CartItem item : items) {
             InvoiceItemPanel itemPanel = new InvoiceItemPanel(item);
             itemsContainer.add(itemPanel);

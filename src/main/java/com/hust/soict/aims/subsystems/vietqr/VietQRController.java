@@ -124,9 +124,11 @@ public class VietQRController implements IPaymentQRCode {
             // Call API with Bearer token
             String response = boundary.checkPaymentStatus(token, requestString);
             
-            // Parse and return status
-            return PaymentStatus.parseResponseString(response);
-            
+            // Parse response string to PaymentStatus
+            PaymentStatus status = new PaymentStatus();
+            status.parseResponseString(response);
+
+            return status;
         } catch (Exception e) {
             throw new UnknownException("Failed to check payment status: " + e.getMessage(), e);
         }

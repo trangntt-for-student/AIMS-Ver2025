@@ -1,14 +1,11 @@
 package com.hust.soict.aims.entities;
 
-/**
- * Entity representing QR code information for payment
- */
 public class QRCode {
-    private String qrCode;        // Base64 or URL of QR code image
-    private String qrLink;        // Link to view QR code
-    private String bankCode;      // Bank code (e.g., "VCB", "TCB")
-    private String bankName;      // Bank name (e.g., "Vietcombank")
-    private String bankAccount;   // Bank account number
+    private String qrCode; // Base64 or URL of QR code image
+    private String qrLink;  // Link to view QR code
+    private String bankCode; // Bank code (e.g., "VCB", "TCB")
+    private String bankName; // Bank name (e.g., "Vietcombank")
+    private String bankAccount; // Bank account number
     
     public QRCode() {}
     
@@ -71,5 +68,4 @@ public class QRCode {
 
         return json.substring(valueStart, valueEnd);
     }
-
 }

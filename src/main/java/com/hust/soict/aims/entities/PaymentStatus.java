@@ -38,16 +38,35 @@ public class PaymentStatus {
         return "CANCELLED".equalsIgnoreCase(status);
     }
     
-    // Factory methods
-    public static PaymentStatus parseResponseString(String response) {
-        // Parse response from VietQR API
-        // For now, simple implementation
+    public void parseResponseString(String response) {
         if (response == null || response.isEmpty()) {
-            return new PaymentStatus("UNKNOWN", "Empty response");
+            this.status = "UNKNOWN";
+            this.message = "Empty response";
+            return;
         }
         
-        // TODO: Parse actual JSON response from VietQR
-        return new PaymentStatus("PENDING", "Payment is being processed");
+        // Parse "status" field: "SUCCESS" or "FAILED"
+        if (response.contains("\"status\"")) {
+            int start = response.indexOf("\"status\":\"") + 10;
+            int end = response.indexOf("\"", start);
+            if (start > 9 && end > start) {
+                String parsedStatus = response.substring(start, end).toUpperCase();
+                if ("SUCCESS".equals(parsedStatus)) {
+                    this.status = "COMPLETED";
+                } else {
+                    this.status = parsedStatus;
+                }
+            }
+        }
+        
+        // Parse "message" field
+        if (response.contains("\"message\"")) {
+            int start = response.indexOf("\"message\":\"") + 11;
+            int end = response.indexOf("\"", start);
+            if (start > 10 && end > start) {
+                this.message = response.substring(start, end);
+            }
+        }
     }
     
     @Override

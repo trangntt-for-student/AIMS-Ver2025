@@ -3,11 +3,13 @@ package com.hust.soict.aims.controls;
 import com.hust.soict.aims.entities.*;
 import com.hust.soict.aims.services.shipping.IShippingFeeCalculator;
 import com.hust.soict.aims.services.shipping.WeightBaseShippingFeeCalculator;
+import com.hust.soict.aims.utils.ServiceProvider;
 import java.util.List;
 import java.util.UUID;
 
 public class PlaceOrderController {
     private final IShippingFeeCalculator shippingFeeCalculator;
+    private final PayOrderController payOrderController;
     
     private Order currentOrder;
     private List<CartItem> orderItems;
@@ -15,10 +17,9 @@ public class PlaceOrderController {
     
     public PlaceOrderController() {
         this.shippingFeeCalculator = new WeightBaseShippingFeeCalculator();
-    }
-    
-    public PlaceOrderController(IShippingFeeCalculator shippingFeeCalculator) {
-        this.shippingFeeCalculator = shippingFeeCalculator;
+        this.payOrderController = new PayOrderController(
+            ServiceProvider.getInstance().getQRPaymentController()
+        );
     }
     
     /**
@@ -43,13 +44,6 @@ public class PlaceOrderController {
         }
     }
     
-    // ==================== Public API ====================
-    
-    /**
-     * Place order from cart with delivery info
-     * Validates stock, calculates shipping, creates invoice preview
-     * Note: Does NOT reduce stock - call payOrder() after payment confirmation
-     */
     public PlaceOrderResult placeOrder(CartController cart, DeliveryInfo deliveryInfo) {
         if (!initializeOrder(cart)) {
             return PlaceOrderResult.failure("Cart is empty");
@@ -69,10 +63,6 @@ public class PlaceOrderController {
         return result;
     }
     
-    /**
-     * Finalize order after payment confirmation
-     * Re-validates stock and reduces inventory
-     */
     public PlaceOrderResult payOrder() {
         if (currentOrder == null || orderItems == null) {
             return PlaceOrderResult.failure("No order to pay");
@@ -83,17 +73,34 @@ public class PlaceOrderController {
             return stockCheck;
         }
         
-        return reduceStockAndComplete();
+        PaymentTransaction transaction = payOrderController.payOrder(currentOrder);
+        if (transaction == null || !transaction.isSuccess()) {
+            return PlaceOrderResult.failure("Invalid payment transaction");
+        }
+        
+        // Build invoice and set payment transaction
+        Invoice invoice = buildInvoice();
+        invoice.setPaymentTransaction(transaction);
+        
+        // Save invoice in order
+        currentOrder.setInvoice(invoice);
+        
+        // Reduce stock
+        try {
+            for (CartItem item : orderItems) {
+                Database.reduceStock(item.getProduct().getId(), item.getQuantity());
+            }
+        } catch (Exception e) {
+            return PlaceOrderResult.failure("Failed to reduce stock: " + e.getMessage());
+        }
+        
+        // Set order status to pending
+        currentOrder.setStatus("pending");
+        
+        PlaceOrderResult result = PlaceOrderResult.success("Order completed successfully");
+        result.invoice = invoice;
+        return result;
     }
-    
-    /**
-     * Get current order being processed
-     */
-    public Order getCurrentOrder() {
-        return currentOrder;
-    }
-    
-    // ==================== Order Initialization ====================
     
     private boolean initializeOrder(CartController cart) {
         if (cart == null || cart.isEmpty()) {
@@ -101,7 +108,7 @@ public class PlaceOrderController {
         }
         
         currentOrder = new Order();
-        currentOrder.setId(UUID.randomUUID().toString());
+        currentOrder.setId("ORD-" + UUID.randomUUID().toString());
         
         orderItems = cart.getItems();
         currentOrder.setItems(orderItems);
@@ -110,8 +117,6 @@ public class PlaceOrderController {
         
         return true;
     }
-    
-    // ==================== Stock Validation ====================
     
     private PlaceOrderResult validateStock() {
         if (currentOrder == null || orderItems == null) {
@@ -133,24 +138,7 @@ public class PlaceOrderController {
         
         return PlaceOrderResult.success("Stock validated");
     }
-    
-    private PlaceOrderResult reduceStockAndComplete() {
-        try {
-            for (CartItem item : orderItems) {
-                Database.reduceStock(item.getProduct().getId(), item.getQuantity());
-            }
-            
-            PlaceOrderResult result = PlaceOrderResult.success("Order completed successfully");
-            result.invoice = buildInvoice();
-            return result;
-            
-        } catch (Exception e) {
-            return PlaceOrderResult.failure("Failed to process order: " + e.getMessage());
-        }
-    }
-    
-    // ==================== Delivery & Shipping ====================
-    
+
     private boolean applyDeliveryInfo(DeliveryInfo deliveryInfo) {
         if (currentOrder == null) {
             return false;
@@ -161,12 +149,18 @@ public class PlaceOrderController {
         return true;
     }
     
-    // ==================== Invoice ====================
-    
     private Invoice buildInvoice() {
         if (currentOrder == null || currentOrder.getDeliveryInfo() == null) {
             return null;
         }
-        return new Invoice(currentOrder, subtotal, currentOrder.getShippingFee());
+        return new Invoice(subtotal, currentOrder.getShippingFee());
+    }
+        
+    public Order getCurrentOrder() {
+        return currentOrder;
+    }
+
+    public PayOrderController getPayOrderController() {
+        return payOrderController;
     }
 }
