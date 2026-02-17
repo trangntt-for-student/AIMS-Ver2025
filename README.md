@@ -1,42 +1,48 @@
 # AIMS-Ver2025
+ITSS Software Development (IT4549) and Software Design & Construction (IT4490) Capstone Project
 
-## Yêu cầu
+## Requirements
 - JDK >= 17
 - Maven >= 3.9.5
 - SQLite >= 3.44.0
 - Spring Boot >= 3.1.5
 
-## Hướng dẫn chạy code
+## Getting Started
 
-### Clone repository về máy local
+### Clone the repository to your local machine
 ```bash 
 git clone https://github.com/trangntt-for-student/AIMS-Ver2025.git
 ```
-Chuyển sang thư mục của project
+Navigate to the project directory
 ```bash
 cd AIMS-Ver2025
 ```
 
-### Build dự án bằng Maven
+### Build the project with Maven
 ```bash
 mvn clean install
 ```
 
-Hoặc có thể bỏ qua bước này nếu sử dụng IDE như IntelliJ IDEA hoặc Eclipse để tự động build project.
+You can skip this step if you are using an IDE like IntelliJ IDEA or Eclipse, which will automatically build the project.
 
-### Tạo file cấu hình application.properties
+### Create the application.properties configuration file
 
-Tạo file `application.properties` trong thư mục `src/main/resources/`.
+Create the `application.properties` file in the `src/main/resources/` directory.
 
-Copy nội dung của file `application.properties.example` và dán vào file `application.properties`. Chỉnh sửa các thông tin cấu hình theo nhu cầu của bạn.
+Copy the contents of `application.properties.example` and paste them into `application.properties`. Modify the configuration settings according to your needs.
 
-Truy cập trang: https://developer.paypal.com/dashboard/ để lấy các thông tin cần thiết cho cấu hình PayPal.
-- Bước 1: Tạo tài khoản sandbox (nếu chưa có).
-- Bước 2: Tạo ứng dụng mới trong phần Apps & Credentials để lấy Client ID và Secret.
+Visit: https://developer.paypal.com/dashboard/ to obtain the necessary information for PayPal configuration.
+- Step 1: Create a sandbox account (if you don't have one).
+- Step 2: Create a new application in the Apps & Credentials section to get the Client ID and Secret.
 
-### Chạy ứng dụng
-Sử dụng Maven để chạy ứng dụng:
+Visit: https://vietqr.vn/merchant/request to obtain the necessary information for VietQR configuration.
+- Step 1: Create a new account.
+- Step 2: Create a new application in the Apps & Credentials section to get the Username and Password.
+- Step 3: Create a new bank account in the Bank Accounts section to get the Bank Account Number, Bank Account Name, and Bank Code.
+
+### Run the application
+Use Maven to run the application:
 ```bash
 mvn spring-boot:run
 ```
-Hoặc chạy trực tiếp từ IDE bằng cách chạy class `com.hust.soict.aims.App.java`.
+Or run directly from your IDE by executing the `com.hust.soict.aims.App.java` class.
