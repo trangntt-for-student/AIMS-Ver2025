@@ -10,6 +10,7 @@ import com.hust.soict.aims.controls.CartController;
 import com.hust.soict.aims.entities.Invoice;
 import com.hust.soict.aims.entities.QRCode;
 import com.hust.soict.aims.entities.Order;
+import com.hust.soict.aims.entities.PaymentStatus;
 import com.hust.soict.aims.utils.ServiceProvider;
 
 import static com.hust.soict.aims.utils.UIConstant.*;
@@ -455,7 +456,30 @@ public class PaymentScreen extends BaseScreenHandler {
      * Complete order after successful payment
      */
     private void processPaymentCompletion() {
-        // Call payOrder to reduce stock
+        // Step 1: Check payment status first
+        try {
+            Order order = invoice.getOrder();
+            PaymentStatus paymentStatus = payOrderController.checkPaymentStatus(order);
+            
+            System.out.println("[PaymentScreen] Payment status: " + paymentStatus);
+            
+            // For QR payment, we trust user confirmation (status may still be PENDING)
+            // In production, you might want to wait for COMPLETED status
+            if (paymentStatus.isFailed() || paymentStatus.isCancelled()) {
+                JOptionPane.showMessageDialog(this,
+                    "Payment failed: " + paymentStatus.getMessage(),
+                    "Payment Failed",
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+        } catch (Exception e) {
+            System.err.println("[PaymentScreen] Error checking payment status: " + e.getMessage());
+            // Continue with order completion even if status check fails
+            // (user has confirmed payment manually)
+        }
+        
+        // Step 2: Complete order (reduce stock, finalize)
         PlaceOrderController.PlaceOrderResult result = payOrderController.completeOrder();
         
         if (result.success) {

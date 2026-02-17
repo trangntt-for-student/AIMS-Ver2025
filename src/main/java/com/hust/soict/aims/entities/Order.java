@@ -31,11 +31,20 @@ public class Order {
     
     public LocalDateTime getCreatedAt() { return createdAt; }
     
-    public double getTotalAmount() {
-    	double subtotal = items.stream()
-    			.mapToDouble(item -> item.getProduct().getCurrentPrice() * item.getQuantity())
+    public double getSubtotal() {
+        return items.stream()
+                .mapToDouble(item -> item.getProduct().getCurrentPrice() * item.getQuantity())
                 .sum();
-        long amount = (long) (subtotal + getShippingFee());
+    }
+
+    public double getTotalWeight() {
+        return items.stream()
+                .mapToDouble(item -> item.getProduct().getWeight() * item.getQuantity())
+                .sum();
+    }
+    
+    public double getTotalAmount() {
+    	long amount = (long) (getSubtotal() + getShippingFee());
         return amount + amount * TAX;
     }
 }
