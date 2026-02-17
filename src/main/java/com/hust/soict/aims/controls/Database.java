@@ -6,7 +6,7 @@ import java.sql.*;
 import java.util.*;
 
 public class Database {
-    private static final String DB_FILE = "aims.db";
+    private static final String DB_FILE = "src/main/resources/aims.db";
     private static final String URL = "jdbc:sqlite:" + DB_FILE;
     
     /**
