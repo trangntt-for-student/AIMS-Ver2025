@@ -77,7 +77,7 @@ public class InvoiceItemPanel extends JPanel {
         priceTitleLabel.setFont(FONT_SMALL);
         priceTitleLabel.setForeground(TEXT_SECONDARY);
         
-        JLabel priceValueLabel = new JLabel(String.format("$%.2f", cartItem.getProduct().getCurrentPrice()));
+        JLabel priceValueLabel = new JLabel(String.format("%,.0f₫", cartItem.getProduct().getCurrentPrice()));
         priceValueLabel.setFont(FONT_BODY);
         priceValueLabel.setHorizontalAlignment(SwingConstants.LEFT);
         
@@ -95,7 +95,7 @@ public class InvoiceItemPanel extends JPanel {
         panel.setPreferredSize(new Dimension(120, 60));
         
         double itemSubtotal = cartItem.getProduct().getCurrentPrice() * cartItem.getQuantity();
-        JLabel subtotalLabel = new JLabel(String.format("$%.2f", itemSubtotal));
+        JLabel subtotalLabel = new JLabel(String.format("%,.0f₫", itemSubtotal));
         subtotalLabel.setFont(FONT_BUTTON_LARGE);
         subtotalLabel.setForeground(INFO_COLOR);
         subtotalLabel.setHorizontalAlignment(SwingConstants.RIGHT);

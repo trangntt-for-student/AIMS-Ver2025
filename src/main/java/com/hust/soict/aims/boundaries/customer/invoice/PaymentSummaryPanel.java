@@ -99,8 +99,8 @@ public class PaymentSummaryPanel extends JPanel {
     }
     
     private void updateSummary() {
-        subtotalLabel.setText(String.format("$%.2f", invoice.getSubtotal()));
-        shippingLabel.setText(String.format("$%.2f", invoice.getShippingFee()));
-        totalLabel.setText(String.format("$%.2f", invoice.getTotal()));
+        subtotalLabel.setText(String.format("%,.0f₫", invoice.getSubtotal()));
+        shippingLabel.setText(String.format("%,.0f₫", invoice.getShippingFee()));
+        totalLabel.setText(String.format("%,.0f₫", invoice.getTotal()));
     }
 }

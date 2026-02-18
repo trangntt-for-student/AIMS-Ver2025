@@ -69,7 +69,7 @@ public class CartItemPanel extends JPanel {
         JLabel nameLabel = new JLabel(cartItem.getProduct().getTitle());
         nameLabel.setFont(FONT_PRODUCT_NAME);
         
-        JLabel priceLabel = new JLabel(String.format("Price: $%.2f", 
+        JLabel priceLabel = new JLabel(String.format("Price: %,.0f₫", 
             cartItem.getProduct().getCurrentPrice()));
         priceLabel.setFont(FONT_SMALL);
         priceLabel.setForeground(TEXT_SECONDARY);
@@ -119,7 +119,7 @@ public class CartItemPanel extends JPanel {
         
         // Subtotal label
         double itemSubtotal = cartItem.getProduct().getCurrentPrice() * cartItem.getQuantity();
-        subtotalLabel = new JLabel(String.format("$%.2f", itemSubtotal));
+        subtotalLabel = new JLabel(String.format("%,.0f₫", itemSubtotal));
         subtotalLabel.setFont(FONT_BUTTON_LARGE);
         subtotalLabel.setForeground(INFO_COLOR);
         subtotalLabel.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -168,7 +168,7 @@ public class CartItemPanel extends JPanel {
      */
     private void updateSubtotal(int quantity) {
         double itemSubtotal = cartItem.getProduct().getCurrentPrice() * quantity;
-        subtotalLabel.setText(String.format("$%.2f", itemSubtotal));
+        subtotalLabel.setText(String.format("%,.0f₫", itemSubtotal));
     }
     
     /**

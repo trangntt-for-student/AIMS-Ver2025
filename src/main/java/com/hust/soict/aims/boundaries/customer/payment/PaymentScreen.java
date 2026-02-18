@@ -238,7 +238,7 @@ public class PaymentScreen extends BaseScreenHandler {
             qrCode.getBankName(), qrCode.getBankAccount()));
         
         // Update amount
-        amountLabel.setText(String.format("Amount: $%.2f", invoice.getTotal()));
+        amountLabel.setText(String.format("Amount: %,.0f₫", invoice.getTotal()));
         
         // Update order ID
         orderIdLabel.setText("Order: " + placeOrderController.getCurrentOrder().getId());

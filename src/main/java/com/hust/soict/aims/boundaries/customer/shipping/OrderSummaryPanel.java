@@ -88,7 +88,7 @@ public class OrderSummaryPanel extends JPanel {
         panel.add(Box.createRigidArea(new Dimension(0, SPACING_XSMALL)));
         
         // Shipping row
-        shippingLabel = new JLabel("$0.00");
+        shippingLabel = new JLabel("0₫");
         shippingLabel.setFont(FONT_BODY);
         shippingLabel.setForeground(SUCCESS_COLOR);
         panel.add(createSummaryRow("Shipping:", shippingLabel));
@@ -156,9 +156,9 @@ public class OrderSummaryPanel extends JPanel {
         }
         
         // Update calculation labels
-        subtotalLabel.setText(String.format("$%.2f", subtotal));
-        shippingLabel.setText(String.format("$%.2f (Free)", shipping));
-        totalLabel.setText(String.format("$%.2f", total));
+        subtotalLabel.setText(String.format("%,.0f₫", subtotal));
+        shippingLabel.setText(String.format("%,.0f₫ (Free)", shipping));
+        totalLabel.setText(String.format("%,.0f₫", total));
         
         // Refresh UI
         itemsPanel.revalidate();
@@ -186,7 +186,7 @@ public class OrderSummaryPanel extends JPanel {
         nameLabel.setFont(FONT_PRODUCT_NAME);
         nameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
-        JLabel priceLabel = new JLabel(String.format("Price: $%.2f", item.getProduct().getCurrentPrice()));
+        JLabel priceLabel = new JLabel(String.format("Price: %,.0f₫", item.getProduct().getCurrentPrice()));
         priceLabel.setFont(FONT_SMALL);
         priceLabel.setForeground(TEXT_SECONDARY);
         priceLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -204,7 +204,7 @@ public class OrderSummaryPanel extends JPanel {
         
         // Right: Item subtotal
         double itemSubtotal = item.getProduct().getCurrentPrice() * item.getQuantity();
-        JLabel subtotalLabel = new JLabel(String.format("$%.2f", itemSubtotal));
+        JLabel subtotalLabel = new JLabel(String.format("%,.0f₫", itemSubtotal));
         subtotalLabel.setFont(FONT_BUTTON_LARGE);
         subtotalLabel.setForeground(INFO_COLOR);
         

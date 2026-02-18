@@ -53,7 +53,7 @@ public class ProductCardPanel extends JPanel {
         JPanel infoPanel = new JPanel(new GridLayout(2, 1, 0, SPACING_XSMALL));
         infoPanel.setOpaque(false);
         
-        JLabel priceLabel = new JLabel(String.format("Price: $%.2f", product.getCurrentPrice()));
+        JLabel priceLabel = new JLabel(String.format("Price: %,.0f₫", product.getCurrentPrice()));
         priceLabel.setFont(FONT_BODY);
         priceLabel.setForeground(INFO_COLOR);
         

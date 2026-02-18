@@ -61,12 +61,11 @@ public class Database {
     private static void seed(Connection conn) throws SQLException {
         String insert = "INSERT INTO products(type,title,originalValue,currentPrice,weight,dimension,description,extra) VALUES (?,?,?,?,?,?,?,?)";
         try (PreparedStatement ps = conn.prepareStatement(insert)) {
-            // add 15 books
             for (int i = 1; i <= 15; i++) {
                 ps.setString(1, "book");
                 ps.setString(2, "Book title " + i);
-                ps.setDouble(3, 100 + i);
-                ps.setDouble(4, 80 + i);
+                ps.setDouble(3, 60000 + i * 3000);
+                ps.setDouble(4, 50000 + i * 3000);
                 ps.setDouble(5, 0.5 + i * 0.01);
                 ps.setString(6, "15x20cm");
                 ps.setString(7, "A great book.");
@@ -75,12 +74,11 @@ public class Database {
                 ps.executeUpdate();
             }
 
-            // add 10 newspapers
             for (int i = 1; i <= 10; i++) {
                 ps.setString(1, "newspaper");
                 ps.setString(2, "Newspaper " + i);
-                ps.setDouble(3, 5.0 + i);
-                ps.setDouble(4, 3.0 + i);
+                ps.setDouble(3, 15000 + i * 2000);
+                ps.setDouble(4, 10000 + i * 2000);
                 ps.setDouble(5, 0.2);
                 ps.setString(6, "30x40cm");
                 ps.setString(7, "Daily news.");
@@ -89,12 +87,11 @@ public class Database {
                 ps.executeUpdate();
             }
 
-            // add 12 CDs
             for (int i = 1; i <= 12; i++) {
                 ps.setString(1, "cd");
                 ps.setString(2, "Album " + i);
-                ps.setDouble(3, 15.0 + i);
-                ps.setDouble(4, 12.0 + i);
+                ps.setDouble(3, 45000 + i * 4000);
+                ps.setDouble(4, 35000 + i * 4000);
                 ps.setDouble(5, 0.1);
                 ps.setString(6, "12cm");
                 ps.setString(7, "Music album.");
@@ -103,12 +100,11 @@ public class Database {
                 ps.executeUpdate();
             }
 
-            // add 13 DVDs
             for (int i = 1; i <= 13; i++) {
                 ps.setString(1, "dvd");
                 ps.setString(2, "Movie " + i);
-                ps.setDouble(3, 25.0 + i);
-                ps.setDouble(4, 20.0 + i);
+                ps.setDouble(3, 55000 + i * 4000);
+                ps.setDouble(4, 45000 + i * 4000);
                 ps.setDouble(5, 0.2);
                 ps.setString(6, "14x19cm");
                 ps.setString(7, "A movie.");

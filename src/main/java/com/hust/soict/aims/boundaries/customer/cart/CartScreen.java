@@ -37,7 +37,7 @@ public class CartScreen extends BaseScreenHandler {
         totalItemsLabel = new JLabel("Total Items: 0");
         totalItemsLabel.setFont(FONT_BODY);
         
-        subtotalLabel = new JLabel("Subtotal: $0.00");
+        subtotalLabel = new JLabel("Subtotal: 0₫");
         subtotalLabel.setFont(FONT_HEADER);
         subtotalLabel.setForeground(INFO_COLOR);
 
@@ -166,7 +166,7 @@ public class CartScreen extends BaseScreenHandler {
         double subtotal = cartController.getSubtotal();
         
         totalItemsLabel.setText(String.format("Total Items: %d", totalItems));
-        subtotalLabel.setText(String.format("Subtotal: $%.2f", subtotal));
+        subtotalLabel.setText(String.format("Subtotal: %,.0f₫", subtotal));
         
         // Enable/disable buttons
         placeOrderButton.setEnabled(!cartController.isEmpty());

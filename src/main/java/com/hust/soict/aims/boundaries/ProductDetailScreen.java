@@ -3,7 +3,6 @@ package com.hust.soict.aims.boundaries;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
-import com.hust.soict.aims.entities.*;
 import com.hust.soict.aims.entities.products.Book;
 import com.hust.soict.aims.entities.products.CD;
 import com.hust.soict.aims.entities.products.DVD;
@@ -18,8 +17,8 @@ public class ProductDetailScreen extends JDialog {
         area.setEditable(false);
         StringBuilder sb = new StringBuilder();
         sb.append("Title: ").append(p.getTitle()).append("\n");
-        sb.append("Current price: ").append(p.getCurrentPrice()).append("\n");
-        sb.append("Original value: ").append(p.getOriginalValue()).append("\n");
+        sb.append("Current price: ").append(String.format("%,.0f₫", p.getCurrentPrice())).append("\n");
+        sb.append("Original value: ").append(String.format("%,.0f₫", p.getOriginalValue())).append("\n");
         sb.append("Weight: ").append(p.getWeight()).append("\n");
         sb.append("Dimension: ").append(p.getDimension()).append("\n");
         sb.append("Description: ").append(p.getDescription()).append("\n\n");
