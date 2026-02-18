@@ -14,7 +14,6 @@ class AccessTokenResponse {
 
 			this.accessToken = root.get("access_token").asText();
 			this.expiresIn = root.get("expires_in").asLong();
-
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

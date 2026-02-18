@@ -64,7 +64,8 @@ public class PayPalController implements IPaymentGateway {
 			String token = getValidAccessToken();
 
 			BigDecimal amount = BigDecimal.valueOf(order.getTotalAmount());
-			CreateOrderRequest request = new CreateOrderRequest(amount, "USD", returnUrl, cancelUrl);
+			BigDecimal amountUsd = CurrencyConverter.vndToUsd(amount);
+			CreateOrderRequest request = new CreateOrderRequest(amountUsd, "USD", returnUrl, cancelUrl);
 
 			String response = boundary.createOrder(token, request);
 			CreateOrderResponse createOrderResponse = new CreateOrderResponse();
@@ -86,9 +87,10 @@ public class PayPalController implements IPaymentGateway {
 			CaptureOrderResponse captureOrderResponse = new CaptureOrderResponse();
 			captureOrderResponse.parseResponseString(capture);
 
-			boolean success = "COMPLETED".equalsIgnoreCase(captureOrderResponse.getStatus());
+			boolean success = captureOrderResponse.isSuccess();
+			String status = captureOrderResponse.getStatus();
 
-			return new GatewayPaymentResult(paymentId, success, captureOrderResponse.getStatus(), null);
+			return new GatewayPaymentResult(paymentId, success, status, null);
 
 		} catch (Exception e) {
 			return new GatewayPaymentResult(paymentId, false, "ERROR", e.getMessage());
