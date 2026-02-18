@@ -32,7 +32,7 @@ public class PaymentServiceProvider {
         );
         
         // Initialize Gateway payment subsystem
-        this.gatewayPaymentSubsystem = PayPalController.create(
+        this.gatewayPaymentSubsystem = new PayPalController(
             ConfigLoader.getPayPalClientId(),
             ConfigLoader.getPayPalClientSecret(),
             ConfigLoader.getPayPalReturnUrl(),

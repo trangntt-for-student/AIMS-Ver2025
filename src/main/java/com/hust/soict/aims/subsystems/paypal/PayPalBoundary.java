@@ -5,29 +5,20 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 
 class PayPalBoundary {
 	private final String apiBaseUrl;
-	private final String clientId;
-	private final String clientSecret;
 	private final HttpClient httpClient;
 
-	PayPalBoundary(String clientId, String clientSecret, String apiBaseUrl) {
-		this.clientId = clientId;
-		this.clientSecret = clientSecret;
+	PayPalBoundary(String apiBaseUrl) {
 		this.apiBaseUrl = apiBaseUrl;
 		this.httpClient = HttpClient.newHttpClient();
 	}
 
-	String getAccessToken() throws IOException, InterruptedException {
-		String credentials = clientId + ":" + clientSecret;
-		String encoded = Base64.getEncoder().encodeToString(credentials.getBytes(StandardCharsets.UTF_8));
-
+	String getAccessToken(String authorizationHeader) throws IOException, InterruptedException {
 		HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create(apiBaseUrl + "/v1/oauth2/token"))
-				.header("Authorization", "Basic " + encoded)
+				.header("Authorization", authorizationHeader)
 				.header("Content-Type", "application/x-www-form-urlencoded")
 				.POST(HttpRequest.BodyPublishers.ofString("grant_type=client_credentials"))
 				.build();

@@ -18,14 +18,15 @@ public class PayPalController implements IPaymentGateway {
 	private String accessToken;
 	private long tokenExpiryTime;
 
-	public static PayPalController create(String clientId, String clientSecret, 
-			String returnUrl, String cancelUrl, String apiBaseUrl) {
-		PayPalBoundary boundary = new PayPalBoundary(clientId, clientSecret, apiBaseUrl);
-		return new PayPalController(boundary, returnUrl, cancelUrl);
-	}
+	// PayPal credentials
+	private final String clientId;
+	private final String clientSecret;
 
-	PayPalController(PayPalBoundary boundary, String returnUrl, String cancelUrl) {
-		this.boundary = boundary;
+	public PayPalController(String clientId, String clientSecret, 
+			String returnUrl, String cancelUrl, String apiBaseUrl) {
+		this.boundary = new PayPalBoundary(apiBaseUrl);
+		this.clientId = clientId;
+		this.clientSecret = clientSecret;
 		this.returnUrl = returnUrl;
 		this.cancelUrl = cancelUrl;
 	}
@@ -46,7 +47,10 @@ public class PayPalController implements IPaymentGateway {
 
 		try {
 			// Get new token
-			String responseTokenString = boundary.getAccessToken();
+			AccessTokenRequest request = new AccessTokenRequest(clientId, clientSecret);
+			String authHeader = request.buildAuthorizationHeader();
+
+			String responseTokenString = boundary.getAccessToken(authHeader);
 
 			AccessTokenResponse tokenResponse = new AccessTokenResponse();
 			tokenResponse.parseResponseString(responseTokenString);

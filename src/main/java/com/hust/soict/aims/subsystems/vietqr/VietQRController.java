@@ -16,7 +16,7 @@ public class VietQRController implements IPaymentQRCode {
     private final String vietqrUsername;
     private final String vietqrPassword;
     
-    // Bank account info for receiving payments (as per VietQR API docs)
+    // Bank account info for receiving payments
     private final String bankCode;
     private final String accountNo;   
     private final String accountName;
