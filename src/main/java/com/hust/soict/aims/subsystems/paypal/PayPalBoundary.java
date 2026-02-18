@@ -8,20 +8,22 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-public class PayPalBoundary {
+class PayPalBoundary {
 	private static final String BASE_URL = "https://api-m.sandbox.paypal.com";
 
+	// PayPal credentials
 	private final String clientId;
 	private final String clientSecret;
+	
 	private final HttpClient httpClient;
 
-	public PayPalBoundary(String clientId, String clientSecret) {
+	PayPalBoundary(String clientId, String clientSecret) {
 		this.clientId = clientId;
 		this.clientSecret = clientSecret;
 		this.httpClient = HttpClient.newHttpClient();
 	}
 
-	public AccessTokenResponse getAccessToken() throws IOException, InterruptedException {
+	String getAccessToken() throws IOException, InterruptedException {
 		String credentials = clientId + ":" + clientSecret;
 		String encoded = Base64.getEncoder().encodeToString(credentials.getBytes(StandardCharsets.UTF_8));
 
@@ -31,12 +33,10 @@ public class PayPalBoundary {
 
 		HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-		AccessTokenResponse dto = new AccessTokenResponse();
-		dto.parseResponseString(response.body());
-		return dto;
+		return response.body();
 	}
 
-	public CreateOrderResponse createOrder(String accessToken, CreateOrderRequest requestDto)
+	String createOrder(String accessToken, CreateOrderRequest requestDto)
 			throws IOException, InterruptedException {
 
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(BASE_URL + "/v2/checkout/orders"))
@@ -45,12 +45,10 @@ public class PayPalBoundary {
 
 		HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-		CreateOrderResponse dto = new CreateOrderResponse();
-		dto.parseResponseString(response.body());
-		return dto;
+		return response.body();
 	}
 
-	public CaptureOrderResponse captureOrder(String accessToken, String orderId)
+	String captureOrder(String accessToken, String orderId)
 			throws IOException, InterruptedException {
 
 		HttpRequest request = HttpRequest.newBuilder()
@@ -60,8 +58,6 @@ public class PayPalBoundary {
 
 		HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-		CaptureOrderResponse dto = new CaptureOrderResponse();
-		dto.parseResponseString(response.body());
-		return dto;
+		return response.body();
 	}
 }
