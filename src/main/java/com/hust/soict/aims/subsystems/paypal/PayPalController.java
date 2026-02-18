@@ -18,15 +18,20 @@ public class PayPalController implements IPaymentGateway {
 	private String accessToken;
 	private long tokenExpiryTime;
 
-	public PayPalController(PayPalBoundary boundary, String returnUrl, String cancelUrl) {
+	public static PayPalController create(String clientId, String clientSecret, 
+			String returnUrl, String cancelUrl) {
+		PayPalBoundary boundary = new PayPalBoundary(clientId, clientSecret);
+		return new PayPalController(boundary, returnUrl, cancelUrl);
+	}
+
+	PayPalController(PayPalBoundary boundary, String returnUrl, String cancelUrl) {
 		this.boundary = boundary;
 		this.returnUrl = returnUrl;
 		this.cancelUrl = cancelUrl;
 	}
 
 	/**
-	 * Get valid access token (renew if expired) Token expires in 300 seconds (5
-	 * minutes)
+	 * Get valid access token (renew if expired) Token expires in 300 seconds (5 minutes)
 	 * 
 	 * @return Valid access token
 	 * @throws PaymentException if token generation fails

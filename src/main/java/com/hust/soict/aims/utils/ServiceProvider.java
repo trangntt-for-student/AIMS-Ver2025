@@ -1,24 +1,18 @@
 package com.hust.soict.aims.utils;
 
+import com.hust.soict.aims.IPaymentGateway;
 import com.hust.soict.aims.IPaymentQRCode;
-import com.hust.soict.aims.controls.PayByCreditCardController;
+import com.hust.soict.aims.subsystems.paypal.PayPalController;
 import com.hust.soict.aims.subsystems.vietqr.VietQRController;
 
-/**
- * Service Locator Pattern
- * Provides centralized access to application services
- */
 public class ServiceProvider {
     private static ServiceProvider instance;
     
-    private PayByCreditCardController creditCardController;
-    private IPaymentQRCode qrPaymentController;
+    private IPaymentQRCode qrPaymentSubsystem;
+    private IPaymentGateway gatewayPaymentSubsystem;
     
     private ServiceProvider() {}
-    
-    /**
-     * Get singleton instance
-     */
+
     public static ServiceProvider getInstance() {
         if (instance == null) {
             instance = new ServiceProvider();
@@ -26,46 +20,36 @@ public class ServiceProvider {
         return instance;
     }
     
-    /**
-     * Initialize with payment controllers
-     * Should be called once at application startup
-     * @param creditCardController Credit card payment controller (from Spring)
-     */
-    public void initialize(PayByCreditCardController creditCardController) {
-        this.creditCardController = creditCardController;
+    public void initialize() {
+        // Initialize QR payment subsystem (VietQR)
+        this.qrPaymentSubsystem = new VietQRController(
+            ConfigLoader.getVietQRUsername(),
+            ConfigLoader.getVietQRPassword(),
+            ConfigLoader.getVietQRBankCode(),
+            ConfigLoader.getVietQRBankAccount(),
+            ConfigLoader.getVietQRUserBankName()
+        );
         
-        // Initialize QR payment controller with credentials and bank account info from config
-        String vietqrUsername = ConfigLoader.getVietQRUsername();
-        String vietqrPassword = ConfigLoader.getVietQRPassword();
-        String bankCode = ConfigLoader.getVietQRBankCode();
-        String bankAccount = ConfigLoader.getVietQRBankAccount();
-        String userBankName = ConfigLoader.getVietQRUserBankName();
-        
-        this.qrPaymentController = new VietQRController(
-            vietqrUsername, vietqrPassword, bankCode, bankAccount, userBankName
+        // Initialize Gateway payment subsystem (PayPal)
+        this.gatewayPaymentSubsystem = PayPalController.create(
+            ConfigLoader.getPayPalClientId(),
+            ConfigLoader.getPayPalClientSecret(),
+            ConfigLoader.getPayPalReturnUrl(),
+            ConfigLoader.getPayPalCancelUrl()
         );
     }
     
-    /**
-     * Get credit card payment controller
-     * @return PayByCreditCardController for PayPal integration
-     */
-    public PayByCreditCardController getCreditCardController() {
-        if (creditCardController == null) {
-            throw new IllegalStateException("ServiceProvider not initialized! Call initialize() first.");
+    public IPaymentQRCode getQRPaymentSubsystem() {
+        if (qrPaymentSubsystem == null) {
+            throw new IllegalStateException("ServiceProvider not initialized!");
         }
-        return creditCardController;
+        return qrPaymentSubsystem;
     }
     
-    /**
-     * Get QR code payment controller
-     * @return IPaymentQRCode implementation (VietQR)
-     */
-    public IPaymentQRCode getQRPaymentController() {
-        if (qrPaymentController == null) {
-            throw new IllegalStateException("ServiceProvider not initialized! Call initialize() first.");
+    public IPaymentGateway getGatewayPaymentSubsystem() {
+        if (gatewayPaymentSubsystem == null) {
+            throw new IllegalStateException("ServiceProvider not initialized!");
         }
-        return qrPaymentController;
+        return gatewayPaymentSubsystem;
     }
 }
-

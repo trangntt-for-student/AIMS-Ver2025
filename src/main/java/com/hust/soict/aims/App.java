@@ -1,10 +1,8 @@
 package com.hust.soict.aims;
 
 import javax.swing.*;
-import org.springframework.context.ConfigurableApplicationContext;
 
 import com.hust.soict.aims.utils.ServiceProvider;
-import com.hust.soict.aims.controls.PayByCreditCardController;
 import com.hust.soict.aims.controls.ProductController;
 import com.hust.soict.aims.controls.CartController;
 import com.hust.soict.aims.boundaries.customer.homepage.Homepage;
@@ -13,12 +11,10 @@ import com.hust.soict.aims.boundaries.ScreenNavigator;
 public class App {
 	public static void main(String[] args) {
 		// Start embedded Spring Boot for PayPal callbacks
-		ConfigurableApplicationContext ctx = EmbeddedTomcat.startAndGetContext(new String[]{});
-		PayByCreditCardController paymentController = ctx.getBean(PayByCreditCardController.class);
+		EmbeddedTomcat.startAndGetContext(new String[]{});
 
-		// Initialize ServiceProvider with payment controller
-		// Now other classes can get it via ServiceProvider.getInstance()
-		ServiceProvider.getInstance().initialize(paymentController);
+		// Initialize ServiceProvider (creates all payment controllers internally)
+		ServiceProvider.getInstance().initialize();
 
 		SwingUtilities.invokeLater(() -> {
 			ProductController productController = new ProductController();

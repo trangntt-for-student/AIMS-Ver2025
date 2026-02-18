@@ -5,19 +5,15 @@ import java.awt.*;
 
 import com.hust.soict.aims.boundaries.BaseScreenHandler;
 import com.hust.soict.aims.controls.PlaceOrderController;
-import com.hust.soict.aims.controls.PayOrderController;
 import com.hust.soict.aims.controls.CartController;
 import com.hust.soict.aims.entities.Invoice;
-import com.hust.soict.aims.entities.Order;
 import com.hust.soict.aims.entities.payments.QRCode;
-import com.hust.soict.aims.utils.ServiceProvider;
 import static com.hust.soict.aims.utils.UIConstant.*;
 
 public class PaymentScreen extends BaseScreenHandler {
     private final Invoice invoice;
     private final CartController cartController;
     private final PlaceOrderController placeOrderController;
-    private final PayOrderController payOrderController;
     
     private JPanel qrPanel;
     private JLabel qrImageLabel;
@@ -38,7 +34,6 @@ public class PaymentScreen extends BaseScreenHandler {
         this.invoice = invoice;
         this.cartController = cartController;
         this.placeOrderController = placeOrderController;
-        this.payOrderController = placeOrderController.getPayOrderController();
         
         initializeScreen();
     }
@@ -90,7 +85,7 @@ public class PaymentScreen extends BaseScreenHandler {
         confirmQRButton.setCursor(CURSOR_HAND);
         confirmQRButton.setPreferredSize(new Dimension(160, 40));
         
-        creditCardButton = new JButton("Pay by Credit Card");
+        creditCardButton = new JButton("Pay through PayPal");
         creditCardButton.setFont(FONT_BUTTON);
         creditCardButton.setBackground(INFO_COLOR);
         creditCardButton.setForeground(TEXT_ON_PRIMARY);
@@ -194,8 +189,7 @@ public class PaymentScreen extends BaseScreenHandler {
         SwingWorker<QRCode, Void> worker = new SwingWorker<>() {
             @Override
             protected QRCode doInBackground() throws Exception {
-                Order order = placeOrderController.getCurrentOrder();
-                return payOrderController.generatePaymentQR(order);
+                return placeOrderController.generatePaymentQR();
             }
             
             @Override
@@ -412,31 +406,52 @@ public class PaymentScreen extends BaseScreenHandler {
     }
     
     private void handleCreditCardPayment() {
-        try {
-            boolean success = ServiceProvider.getInstance()
-                .getCreditCardController()
-                .executePaymentFlow(invoice.getTotal());
-            
-            if (success) {
-                processPaymentCompletion();
-            } else {
-                JOptionPane.showMessageDialog(this,
-                    "Payment not completed or timed out.",
-                    "Payment Failed",
-                    JOptionPane.WARNING_MESSAGE);
+        // Disable buttons during payment
+        confirmQRButton.setEnabled(false);
+        creditCardButton.setEnabled(false);
+        cancelButton.setEnabled(false);
+        
+        // Show processing message
+        JOptionPane.showMessageDialog(this,
+            "A browser window will open for PayPal payment.\nPlease complete the payment and wait...",
+            "PayPal Payment",
+            JOptionPane.INFORMATION_MESSAGE);
+        
+        // Process payment in background thread
+        SwingWorker<PlaceOrderController.PlaceOrderResult, Void> worker = new SwingWorker<>() {
+            @Override
+            protected PlaceOrderController.PlaceOrderResult doInBackground() {
+                return placeOrderController.payOrderThroughGateway();
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this,
-                "Error processing payment: " + ex.getMessage(),
-                "Error",
-                JOptionPane.ERROR_MESSAGE);
-        }
+            
+            @Override
+            protected void done() {
+                // Re-enable buttons
+                confirmQRButton.setEnabled(true);
+                creditCardButton.setEnabled(true);
+                cancelButton.setEnabled(true);
+                
+                try {
+                    handlePaymentResult(get());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(PaymentScreen.this,
+                        "Error processing payment: " + ex.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        };
+        
+        worker.execute();
     }
     
     private void processPaymentCompletion() {
         PlaceOrderController.PlaceOrderResult result = placeOrderController.payOrder();
-        
+        handlePaymentResult(result);
+    }
+    
+    private void handlePaymentResult(PlaceOrderController.PlaceOrderResult result) {
         if (result.success) {
             paid = true;
             cartController.clear();

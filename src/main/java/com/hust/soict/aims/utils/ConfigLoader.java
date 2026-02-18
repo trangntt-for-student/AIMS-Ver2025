@@ -4,10 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-/**
- * Utility class for loading application configuration
- * Reads from application.properties file
- */
 public class ConfigLoader {
     private static final Properties properties = new Properties();
     
@@ -35,61 +31,48 @@ public class ConfigLoader {
         }
     }
     
-    /**
-     * Get property value by key
-     * @param key Property key
-     * @return Property value, or null if not found
-     */
     public static String getProperty(String key) {
         return properties.getProperty(key);
     }
     
-    /**
-     * Get property value with default
-     * @param key Property key
-     * @param defaultValue Default value if key not found
-     * @return Property value or default value
-     */
     public static String getProperty(String key, String defaultValue) {
         return properties.getProperty(key, defaultValue);
     }
     
-    /**
-     * Get VietQR username
-     */
     public static String getVietQRUsername() {
         return getProperty("vietqr.username", "customer-vietqrtest-user2468");
     }
     
-    /**
-     * Get VietQR password
-     */
     public static String getVietQRPassword() {
         return getProperty("vietqr.password", "customer-vietqrtest-user2468=");
     }
     
-    /**
-     * Get VietQR bank account number (for receiving payments)
-     * Field name: bankAccount (as per VietQR API docs)
-     */
     public static String getVietQRBankAccount() {
         return getProperty("vietqr.accountNo", "9704198526191432198");
     }
     
-    /**
-     * Get VietQR account holder name (no diacritics)
-     * Field name: userBankName (as per VietQR API docs)
-     */
     public static String getVietQRUserBankName() {
         return getProperty("vietqr.accountName", "NGUYEN VAN A");
     }
     
-    /**
-     * Get VietQR bank code (e.g., "MB", "970415")
-     * Field name: bankCode (as per VietQR API docs)
-     */
     public static String getVietQRBankCode() {
         return getProperty("vietqr.bankCode", "970415");
+    }
+   
+    public static String getPayPalClientId() {
+        return getProperty("paypal.clientId", "");
+    }
+    
+    public static String getPayPalClientSecret() {
+        return getProperty("paypal.clientSecret", "");
+    }
+    
+    public static String getPayPalReturnUrl() {
+        return getProperty("paypal.returnUrl", "http://localhost:8080/paypal/return");
+    }
+    
+    public static String getPayPalCancelUrl() {
+        return getProperty("paypal.cancelUrl", "http://localhost:8080/paypal/cancel");
     }
 }
 

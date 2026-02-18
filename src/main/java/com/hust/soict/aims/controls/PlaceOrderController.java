@@ -3,6 +3,8 @@ package com.hust.soict.aims.controls;
 import com.hust.soict.aims.daos.Database;
 import com.hust.soict.aims.entities.*;
 import com.hust.soict.aims.entities.payments.PaymentTransaction;
+import com.hust.soict.aims.entities.payments.QRCode;
+import com.hust.soict.aims.exceptions.PaymentException;
 import com.hust.soict.aims.services.shipping.IShippingFeeCalculator;
 import com.hust.soict.aims.services.shipping.WeightBaseShippingFeeCalculator;
 import com.hust.soict.aims.utils.ServiceProvider;
@@ -12,6 +14,7 @@ import java.util.UUID;
 public class PlaceOrderController {
     private final IShippingFeeCalculator shippingFeeCalculator;
     private final PayOrderController payOrderController;
+    private final PayThroughPaymentGatewayController gatewayPaymentController;
     
     private Order currentOrder;
     private List<CartItem> orderItems;
@@ -20,7 +23,10 @@ public class PlaceOrderController {
     public PlaceOrderController() {
         this.shippingFeeCalculator = new WeightBaseShippingFeeCalculator();
         this.payOrderController = new PayOrderController(
-            ServiceProvider.getInstance().getQRPaymentController()
+            ServiceProvider.getInstance().getQRPaymentSubsystem()
+        );
+        this.gatewayPaymentController = new PayThroughPaymentGatewayController(
+            ServiceProvider.getInstance().getGatewayPaymentSubsystem()
         );
     }
     
@@ -77,9 +83,33 @@ public class PlaceOrderController {
         
         PaymentTransaction transaction = payOrderController.payOrder(currentOrder);
         if (transaction == null || !transaction.isSuccess()) {
-            return PlaceOrderResult.failure("Invalid payment transaction");
+            return PlaceOrderResult.failure("Payment failed: " + 
+                (transaction != null ? transaction.getErrorMessage() : "Unknown error"));
         }
         
+        return finalizeOrder(transaction);
+    }
+    
+    public PlaceOrderResult payOrderThroughGateway() {
+        if (currentOrder == null || orderItems == null) {
+            return PlaceOrderResult.failure("No order to pay");
+        }
+        
+        PlaceOrderResult stockCheck = validateStock();
+        if (!stockCheck.success) {
+            return stockCheck;
+        }
+        
+        PaymentTransaction transaction = gatewayPaymentController.payOrder(currentOrder);
+        if (transaction == null || !transaction.isSuccess()) {
+            return PlaceOrderResult.failure("Payment failed: " + 
+                (transaction != null ? transaction.getErrorMessage() : "Unknown error"));
+        }
+        
+        return finalizeOrder(transaction);
+    }
+    
+    private PlaceOrderResult finalizeOrder(PaymentTransaction transaction) {
         // Build invoice and set payment transaction
         Invoice invoice = buildInvoice();
         invoice.setPaymentTransaction(transaction);
@@ -161,8 +191,8 @@ public class PlaceOrderController {
     public Order getCurrentOrder() {
         return currentOrder;
     }
-
-    public PayOrderController getPayOrderController() {
-        return payOrderController;
+    
+    public QRCode generatePaymentQR() throws PaymentException {
+        return payOrderController.generatePaymentQR(currentOrder);
     }
 }
