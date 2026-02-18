@@ -18,3 +18,7 @@ vietqr.apiBaseUrl=https://dev.vietqr.org/vqr/api
 vietqr.accountNo=9704198526191432198
 vietqr.accountName=NGUYEN VAN A
 vietqr.bankCode=970415
+
+# System current strategies
+shippingFeeCalculator.class=com.hust.soict.aims.services.shipping.WeightBaseShippingFeeCalculator
+notification.class=com.hust.soict.aims.services.notification.MailNotification

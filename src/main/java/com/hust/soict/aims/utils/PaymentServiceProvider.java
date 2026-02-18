@@ -5,23 +5,23 @@ import com.hust.soict.aims.IPaymentQRCode;
 import com.hust.soict.aims.subsystems.paypal.PayPalController;
 import com.hust.soict.aims.subsystems.vietqr.VietQRController;
 
-public class ServiceProvider {
-    private static ServiceProvider instance;
+public class PaymentServiceProvider {
+    private static PaymentServiceProvider instance;
     
     private IPaymentQRCode qrPaymentSubsystem;
     private IPaymentGateway gatewayPaymentSubsystem;
     
-    private ServiceProvider() {}
+    private PaymentServiceProvider() {}
 
-    public static ServiceProvider getInstance() {
+    public static PaymentServiceProvider getInstance() {
         if (instance == null) {
-            instance = new ServiceProvider();
+            instance = new PaymentServiceProvider();
         }
         return instance;
     }
     
     public void initialize() {
-        // Initialize QR payment subsystem (VietQR)
+        // Initialize QR payment subsystem
         this.qrPaymentSubsystem = new VietQRController(
             ConfigLoader.getVietQRUsername(),
             ConfigLoader.getVietQRPassword(),
@@ -31,7 +31,7 @@ public class ServiceProvider {
             ConfigLoader.getVietQRApiBaseUrl()
         );
         
-        // Initialize Gateway payment subsystem (PayPal)
+        // Initialize Gateway payment subsystem
         this.gatewayPaymentSubsystem = PayPalController.create(
             ConfigLoader.getPayPalClientId(),
             ConfigLoader.getPayPalClientSecret(),

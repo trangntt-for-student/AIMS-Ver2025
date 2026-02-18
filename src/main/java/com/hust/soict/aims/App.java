@@ -2,7 +2,7 @@ package com.hust.soict.aims;
 
 import javax.swing.*;
 
-import com.hust.soict.aims.utils.ServiceProvider;
+import com.hust.soict.aims.utils.PaymentServiceProvider;
 import com.hust.soict.aims.controls.ProductController;
 import com.hust.soict.aims.controls.CartController;
 import com.hust.soict.aims.boundaries.customer.homepage.Homepage;
@@ -14,7 +14,7 @@ public class App {
 		EmbeddedTomcat.startAndGetContext(new String[]{});
 
 		// Initialize ServiceProvider (creates all payment controllers internally)
-		ServiceProvider.getInstance().initialize();
+		PaymentServiceProvider.getInstance().initialize();
 
 		SwingUtilities.invokeLater(() -> {
 			ProductController productController = new ProductController();

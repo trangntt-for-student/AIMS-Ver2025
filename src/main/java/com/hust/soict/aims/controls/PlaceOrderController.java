@@ -6,8 +6,8 @@ import com.hust.soict.aims.entities.payments.PaymentTransaction;
 import com.hust.soict.aims.entities.payments.QRCode;
 import com.hust.soict.aims.exceptions.PaymentException;
 import com.hust.soict.aims.services.shipping.IShippingFeeCalculator;
-import com.hust.soict.aims.services.shipping.WeightBaseShippingFeeCalculator;
-import com.hust.soict.aims.utils.ServiceProvider;
+import com.hust.soict.aims.utils.SystemServiceFactory;
+import com.hust.soict.aims.utils.PaymentServiceProvider;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,12 +21,12 @@ public class PlaceOrderController {
     private double subtotal;
     
     public PlaceOrderController() {
-        this.shippingFeeCalculator = new WeightBaseShippingFeeCalculator();
+        this.shippingFeeCalculator = SystemServiceFactory.createShippingFeeCalculator();
         this.payOrderController = new PayOrderController(
-            ServiceProvider.getInstance().getQRPaymentSubsystem()
+            PaymentServiceProvider.getInstance().getQRPaymentSubsystem()
         );
         this.gatewayPaymentController = new PayThroughPaymentGatewayController(
-            ServiceProvider.getInstance().getGatewayPaymentSubsystem()
+            PaymentServiceProvider.getInstance().getGatewayPaymentSubsystem()
         );
     }
     
