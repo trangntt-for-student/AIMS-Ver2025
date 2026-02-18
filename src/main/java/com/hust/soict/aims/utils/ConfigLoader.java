@@ -58,6 +58,10 @@ public class ConfigLoader {
     public static String getVietQRBankCode() {
         return getProperty("vietqr.bankCode", "970415");
     }
+    
+    public static String getVietQRApiBaseUrl() {
+        return getProperty("vietqr.apiBaseUrl", "https://dev.vietqr.org/vqr/api");
+    }
    
     public static String getPayPalClientId() {
         return getProperty("paypal.clientId", "");
@@ -73,6 +77,10 @@ public class ConfigLoader {
     
     public static String getPayPalCancelUrl() {
         return getProperty("paypal.cancelUrl", "http://localhost:8080/paypal/cancel");
+    }
+    
+    public static String getPayPalApiBaseUrl() {
+        return getProperty("paypal.apiBaseUrl", "https://api-m.sandbox.paypal.com");
     }
 }
 

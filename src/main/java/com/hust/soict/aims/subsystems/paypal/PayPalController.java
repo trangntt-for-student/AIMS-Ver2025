@@ -19,8 +19,8 @@ public class PayPalController implements IPaymentGateway {
 	private long tokenExpiryTime;
 
 	public static PayPalController create(String clientId, String clientSecret, 
-			String returnUrl, String cancelUrl) {
-		PayPalBoundary boundary = new PayPalBoundary(clientId, clientSecret);
+			String returnUrl, String cancelUrl, String apiBaseUrl) {
+		PayPalBoundary boundary = new PayPalBoundary(clientId, clientSecret, apiBaseUrl);
 		return new PayPalController(boundary, returnUrl, cancelUrl);
 	}
 

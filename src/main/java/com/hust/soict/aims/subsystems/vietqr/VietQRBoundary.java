@@ -7,13 +7,11 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 class VietQRBoundary {
-    private static final String GET_TOKEN_URL = "https://dev.vietqr.org/vqr/api/token_generate";
-    private static final String GENERATE_QR_URL = "https://dev.vietqr.org/vqr/api/qr/generate-customer";
-    private static final String TEST_CALLBACK_URL = "https://dev.vietqr.org/vqr/bank/api/test/transaction-callback";
-    
+    private final String apiBaseUrl;
     private final HttpClient httpClient;
     
-    VietQRBoundary() {
+    VietQRBoundary(String apiBaseUrl) {
+        this.apiBaseUrl = apiBaseUrl;
         this.httpClient = HttpClient.newHttpClient();
     }
     
@@ -27,55 +25,39 @@ class VietQRBoundary {
      */
     String getAccessToken(String authorizationHeader) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(GET_TOKEN_URL))
+                .uri(URI.create(apiBaseUrl + "/token_generate"))
                 .header("Authorization", authorizationHeader)
                 .POST(HttpRequest.BodyPublishers.ofString(""))
                 .build();
         
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
         return response.body();
     }
     
-    /**
-     * Generate QR code
-     * @param accessToken Bearer token from VietQR
-     * @param requestString JSON request string
-     * @return Response string containing QR code data
-     * @throws IOException if HTTP request fails
-     * @throws InterruptedException if request is interrupted
-     */
     String generateQRCode(String accessToken, String requestString) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(GENERATE_QR_URL))
+                .uri(URI.create(apiBaseUrl + "/qr/generate-customer"))
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + accessToken)
                 .POST(HttpRequest.BodyPublishers.ofString(requestString))
                 .build();
         
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        
         return response.body();
     }
     
-    /**
-     * Check payment status (test callback)
-     * @param accessToken Bearer token from VietQR
-     * @param requestString JSON request string
-     * @return Response string containing payment status
-     * @throws IOException if HTTP request fails
-     * @throws InterruptedException if request is interrupted
-     */
     String checkPaymentStatus(String accessToken, String requestString) throws IOException, InterruptedException {
+        // Note: Test callback uses different base path
+        String testCallbackUrl = apiBaseUrl.replace("/vqr/api", "/vqr/bank/api/test/transaction-callback");
+        
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(TEST_CALLBACK_URL))
+                .uri(URI.create(testCallbackUrl))
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + accessToken)
                 .POST(HttpRequest.BodyPublishers.ofString(requestString))
                 .build();
         
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        
         return response.body();
     }
 }

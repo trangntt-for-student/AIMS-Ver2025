@@ -22,8 +22,8 @@ public class VietQRController implements IPaymentQRCode {
     private final String accountName;
     
     public VietQRController(String username, String password, String bankCode,
-                           String bankAccount, String userBankName) {
-        this.boundary = new VietQRBoundary();
+                           String bankAccount, String userBankName, String apiBaseUrl) {
+        this.boundary = new VietQRBoundary(apiBaseUrl);
         this.vietqrUsername = username;
         this.vietqrPassword = password;
         this.bankCode = bankCode;

@@ -9,17 +9,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 class PayPalBoundary {
-	private static final String BASE_URL = "https://api-m.sandbox.paypal.com";
-
-	// PayPal credentials
+	private final String apiBaseUrl;
 	private final String clientId;
 	private final String clientSecret;
-	
 	private final HttpClient httpClient;
 
-	PayPalBoundary(String clientId, String clientSecret) {
+	PayPalBoundary(String clientId, String clientSecret, String apiBaseUrl) {
 		this.clientId = clientId;
 		this.clientSecret = clientSecret;
+		this.apiBaseUrl = apiBaseUrl;
 		this.httpClient = HttpClient.newHttpClient();
 	}
 
@@ -27,24 +25,28 @@ class PayPalBoundary {
 		String credentials = clientId + ":" + clientSecret;
 		String encoded = Base64.getEncoder().encodeToString(credentials.getBytes(StandardCharsets.UTF_8));
 
-		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(BASE_URL + "/v1/oauth2/token"))
-				.header("Authorization", "Basic " + encoded).header("Content-Type", "application/x-www-form-urlencoded")
-				.POST(HttpRequest.BodyPublishers.ofString("grant_type=client_credentials")).build();
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create(apiBaseUrl + "/v1/oauth2/token"))
+				.header("Authorization", "Basic " + encoded)
+				.header("Content-Type", "application/x-www-form-urlencoded")
+				.POST(HttpRequest.BodyPublishers.ofString("grant_type=client_credentials"))
+				.build();
 
 		HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
 		return response.body();
 	}
 
 	String createOrder(String accessToken, CreateOrderRequest requestDto)
 			throws IOException, InterruptedException {
 
-		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(BASE_URL + "/v2/checkout/orders"))
-				.header("Authorization", "Bearer " + accessToken).header("Content-Type", "application/json")
-				.POST(HttpRequest.BodyPublishers.ofString(requestDto.buildRequestString())).build();
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create(apiBaseUrl + "/v2/checkout/orders"))
+				.header("Authorization", "Bearer " + accessToken)
+				.header("Content-Type", "application/json")
+				.POST(HttpRequest.BodyPublishers.ofString(requestDto.buildRequestString()))
+				.build();
 
 		HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
 		return response.body();
 	}
 
@@ -52,12 +54,13 @@ class PayPalBoundary {
 			throws IOException, InterruptedException {
 
 		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create(BASE_URL + "/v2/checkout/orders/" + orderId + "/capture"))
-				.header("Authorization", "Bearer " + accessToken).header("Content-Type", "application/json")
-				.POST(HttpRequest.BodyPublishers.noBody()).build();
+				.uri(URI.create(apiBaseUrl + "/v2/checkout/orders/" + orderId + "/capture"))
+				.header("Authorization", "Bearer " + accessToken)
+				.header("Content-Type", "application/json")
+				.POST(HttpRequest.BodyPublishers.noBody())
+				.build();
 
 		HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
 		return response.body();
 	}
 }

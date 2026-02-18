@@ -27,7 +27,8 @@ public class ServiceProvider {
             ConfigLoader.getVietQRPassword(),
             ConfigLoader.getVietQRBankCode(),
             ConfigLoader.getVietQRBankAccount(),
-            ConfigLoader.getVietQRUserBankName()
+            ConfigLoader.getVietQRUserBankName(),
+            ConfigLoader.getVietQRApiBaseUrl()
         );
         
         // Initialize Gateway payment subsystem (PayPal)
@@ -35,7 +36,8 @@ public class ServiceProvider {
             ConfigLoader.getPayPalClientId(),
             ConfigLoader.getPayPalClientSecret(),
             ConfigLoader.getPayPalReturnUrl(),
-            ConfigLoader.getPayPalCancelUrl()
+            ConfigLoader.getPayPalCancelUrl(),
+            ConfigLoader.getPayPalApiBaseUrl()
         );
     }
     
