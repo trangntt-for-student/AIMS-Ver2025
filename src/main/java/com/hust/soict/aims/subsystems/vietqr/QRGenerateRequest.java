@@ -1,6 +1,6 @@
 package com.hust.soict.aims.subsystems.vietqr;
 
-public class QRGenerateRequest {
+class QRGenerateRequest {
     private String bankCode;
     private String bankAccount;
     private String userBankName;
@@ -10,10 +10,7 @@ public class QRGenerateRequest {
     private String orderId;
     private String transType;
     
-    /**
-     * Constructor for dynamic QR code (qrType = 0)
-     */
-    public QRGenerateRequest(String bankCode, String bankAccount, String userBankName,
+    QRGenerateRequest(String bankCode, String bankAccount, String userBankName,
                              String content, long amount, String orderId) {
         this.bankCode = bankCode;
         this.bankAccount = bankAccount;
@@ -25,7 +22,7 @@ public class QRGenerateRequest {
         this.transType = "C";  // Credit (receiving money)
     }
     
-    public String buildRequestString() {
+    String buildRequestString() {
         // Build JSON request exactly as VietQR API specification
         // https://api.vietqr.vn/vi/api-vietqr-callback/goi-api-generate-vietqr-code
         return String.format(
@@ -42,7 +39,7 @@ public class QRGenerateRequest {
      * - No special characters
      * - Vietnamese without diacritics
      */
-    private String sanitizeContent(String content) {
+    String sanitizeContent(String content) {
         if (content == null) return "";
         
         // Remove diacritics and special characters
@@ -61,7 +58,7 @@ public class QRGenerateRequest {
      * - Max 13 characters
      * - No special characters
      */
-    private String sanitizeOrderId(String orderId) {
+    String sanitizeOrderId(String orderId) {
         if (orderId == null) return "";
         
         // Remove special characters
@@ -75,13 +72,12 @@ public class QRGenerateRequest {
         return sanitized;
     }
     
-    // Getters
-    public String getBankCode() { return bankCode; }
-    public String getBankAccount() { return bankAccount; }
-    public String getUserBankName() { return userBankName; }
-    public String getContent() { return content; }
-    public int getQrType() { return qrType; }
-    public long getAmount() { return amount; }
-    public String getOrderId() { return orderId; }
-    public String getTransType() { return transType; }
+    String getBankCode() { return bankCode; }
+    String getBankAccount() { return bankAccount; }
+    String getUserBankName() { return userBankName; }
+    String getContent() { return content; }
+    int getQrType() { return qrType; }
+    long getAmount() { return amount; }
+    String getOrderId() { return orderId; }
+    String getTransType() { return transType; }
 }

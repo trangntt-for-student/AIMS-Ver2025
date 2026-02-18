@@ -6,14 +6,14 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public class VietQRBoundary {
+class VietQRBoundary {
     private static final String GET_TOKEN_URL = "https://dev.vietqr.org/vqr/api/token_generate";
     private static final String GENERATE_QR_URL = "https://dev.vietqr.org/vqr/api/qr/generate-customer";
     private static final String TEST_CALLBACK_URL = "https://dev.vietqr.org/vqr/bank/api/test/transaction-callback";
     
     private final HttpClient httpClient;
     
-    public VietQRBoundary() {
+    VietQRBoundary() {
         this.httpClient = HttpClient.newHttpClient();
     }
     
@@ -25,7 +25,7 @@ public class VietQRBoundary {
      * @throws IOException if HTTP request fails
      * @throws InterruptedException if request is interrupted
      */
-    public String getAccessToken(String authorizationHeader) throws IOException, InterruptedException {
+    String getAccessToken(String authorizationHeader) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(GET_TOKEN_URL))
                 .header("Authorization", authorizationHeader)
@@ -45,7 +45,7 @@ public class VietQRBoundary {
      * @throws IOException if HTTP request fails
      * @throws InterruptedException if request is interrupted
      */
-    public String generateQRCode(String accessToken, String requestString) throws IOException, InterruptedException {
+    String generateQRCode(String accessToken, String requestString) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(GENERATE_QR_URL))
                 .header("Content-Type", "application/json")
@@ -66,7 +66,7 @@ public class VietQRBoundary {
      * @throws IOException if HTTP request fails
      * @throws InterruptedException if request is interrupted
      */
-    public String checkPaymentStatus(String accessToken, String requestString) throws IOException, InterruptedException {
+    String checkPaymentStatus(String accessToken, String requestString) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(TEST_CALLBACK_URL))
                 .header("Content-Type", "application/json")

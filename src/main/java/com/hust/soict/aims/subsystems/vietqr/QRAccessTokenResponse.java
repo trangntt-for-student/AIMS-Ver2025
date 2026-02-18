@@ -1,17 +1,11 @@
 package com.hust.soict.aims.subsystems.vietqr;
 
-public class QRAccessTokenResponse {
+class QRAccessTokenResponse {
     private String accessToken;
     private String tokenType;
     private int expiresIn;
     
-    public QRAccessTokenResponse() {}
-    
-    /**
-     * Parse response string from VietQR API
-     * @param responseString JSON response string from VietQR
-     */
-    public void parseResponseString(String responseString) {
+    void parseResponseString(String responseString) {
         if (responseString == null || responseString.isEmpty()) {
             return;
         }
@@ -53,19 +47,11 @@ public class QRAccessTokenResponse {
         }
     }
     
-    public String getAccessToken() { return accessToken; }
-    public void setAccessToken(String accessToken) { this.accessToken = accessToken; }
-    
-    public String getTokenType() { return tokenType; }
-    public void setTokenType(String tokenType) { this.tokenType = tokenType; }
-    
-    public int getExpiresIn() { return expiresIn; }
-    public void setExpiresIn(int expiresIn) { this.expiresIn = expiresIn; }
-    
-    /**
-     * Check if response is valid
-     */
-    public boolean isValid() {
+    boolean isValid() {
         return accessToken != null && !accessToken.isEmpty();
     }
+    
+    String getAccessToken() { return accessToken; }  
+    String getTokenType() { return tokenType; }
+    int getExpiresIn() { return expiresIn; }
 }

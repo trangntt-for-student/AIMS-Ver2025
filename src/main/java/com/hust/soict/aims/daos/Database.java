@@ -1,6 +1,5 @@
 package com.hust.soict.aims.daos;
 
-import com.hust.soict.aims.entities.*;
 import com.hust.soict.aims.entities.products.Book;
 import com.hust.soict.aims.entities.products.CD;
 import com.hust.soict.aims.entities.products.DVD;
