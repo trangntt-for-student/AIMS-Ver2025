@@ -1,5 +1,6 @@
 package com.hust.soict.aims.controls;
 
+import com.hust.soict.aims.daos.Database;
 import com.hust.soict.aims.entities.Product;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.hust.soict.aims.controls;
+package com.hust.soict.aims.daos;
 
 import com.hust.soict.aims.entities.*;
 
