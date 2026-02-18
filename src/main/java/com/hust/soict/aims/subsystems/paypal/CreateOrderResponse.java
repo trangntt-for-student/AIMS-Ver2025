@@ -3,11 +3,11 @@ package com.hust.soict.aims.subsystems.paypal;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 
-public class CreateOrderResponse {
+class CreateOrderResponse {
 	private String id;
 	private List<Link> links;
 
-	public void parseResponseString(String json) {
+	void parseResponseString(String json) {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			CreateOrderResponse temp = mapper.readValue(json, CreateOrderResponse.class);
@@ -20,11 +20,11 @@ public class CreateOrderResponse {
 		}
 	}
 
-	public String getId() {
+	String getId() {
 		return id;
 	}
 
-	public String getApproveLink() {
+	String getApproveLink() {
 		return links.stream().filter(l -> "approve".equals(l.getRel())).findFirst().map(Link::getHref).orElse(null);
 	}
 }

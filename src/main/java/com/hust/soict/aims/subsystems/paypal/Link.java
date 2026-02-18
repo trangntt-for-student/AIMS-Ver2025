@@ -1,31 +1,31 @@
 package com.hust.soict.aims.subsystems.paypal;
 
-public class Link {
+class Link {
     private String href;
     private String rel;
     private String method;
 
-    public String getHref() {
+    String getHref() {
         return href;
     }
 
-    public String getRel() {
+    String getRel() {
         return rel;
     }
 
-    public String getMethod() {
+    String getMethod() {
         return method;
     }
 
-    public void setHref(String href) {
+    void setHref(String href) {
         this.href = href;
     }
 
-    public void setRel(String rel) {
+    void setRel(String rel) {
         this.rel = rel;
     }
 
-    public void setMethod(String method) {
+    void setMethod(String method) {
         this.method = method;
     }
 }

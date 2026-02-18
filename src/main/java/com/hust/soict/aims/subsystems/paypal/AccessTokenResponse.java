@@ -3,11 +3,11 @@ package com.hust.soict.aims.subsystems.paypal;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class AccessTokenResponse {
+class AccessTokenResponse {
 	private String accessToken;
 	private long expiresIn;
 
-	public void parseResponseString(String json) {
+	void parseResponseString(String json) {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode root = mapper.readTree(json);
@@ -20,11 +20,11 @@ public class AccessTokenResponse {
 		}
 	}
 
-	public String getAccessToken() {
+	String getAccessToken() {
 		return accessToken;
 	}
 
-	public long getExpiresIn() {
+	long getExpiresIn() {
 		return expiresIn;
 	}
 }

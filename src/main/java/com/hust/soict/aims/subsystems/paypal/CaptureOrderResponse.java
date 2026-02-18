@@ -3,12 +3,12 @@ package com.hust.soict.aims.subsystems.paypal;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class CaptureOrderResponse {
+class CaptureOrderResponse {
 	private String id;
 	private String status;
 	private String captureId;
 
-	public void parseResponseString(String json) {
+	void parseResponseString(String json) {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode root = mapper.readTree(json);
@@ -27,15 +27,15 @@ public class CaptureOrderResponse {
 		}
 	}
 	
-	public String getId() {
+	String getId() {
 		return this.id;
 	}
 
-	public String getStatus() {
+	String getStatus() {
 		return this.status;
 	}
 
-	public String getCaptureId() {
+	String getCaptureId() {
 		return this.captureId;
 	}
 }
