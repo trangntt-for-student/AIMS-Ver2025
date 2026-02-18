@@ -4,6 +4,9 @@ import com.hust.soict.aims.IPaymentGateway;
 import com.hust.soict.aims.entities.payments.GatewayPaymentSession;
 import com.hust.soict.aims.entities.payments.GatewayPaymentResult;
 import com.hust.soict.aims.entities.Order;
+import com.hust.soict.aims.exceptions.*;
+
+import java.io.IOException;
 import java.math.BigDecimal;
 
 public class PayPalController implements IPaymentGateway {
@@ -11,39 +14,81 @@ public class PayPalController implements IPaymentGateway {
 	private final String returnUrl;
 	private final String cancelUrl;
 
+	// Token caching
+	private String accessToken;
+	private long tokenExpiryTime;
+
 	public PayPalController(PayPalBoundary boundary, String returnUrl, String cancelUrl) {
 		this.boundary = boundary;
 		this.returnUrl = returnUrl;
 		this.cancelUrl = cancelUrl;
 	}
 
-	@Override
-	public GatewayPaymentSession createPayment(Order order) {
+	/**
+	 * Get valid access token (renew if expired) Token expires in 300 seconds (5
+	 * minutes)
+	 * 
+	 * @return Valid access token
+	 * @throws PaymentException if token generation fails
+	 */
+	private synchronized String getValidAccessToken() throws PaymentException {
+		long currentTime = System.currentTimeMillis();
+
+		// Check if token is still valid (with 30 seconds buffer)
+		if (this.accessToken != null && currentTime < tokenExpiryTime - 30000) {
+			return this.accessToken;
+		}
+
 		try {
-			AccessTokenResponse token = boundary.getAccessToken();
-			
+			// Get new token
+			String responseTokenString = boundary.getAccessToken();
+
+			AccessTokenResponse tokenResponse = new AccessTokenResponse();
+			tokenResponse.parseResponseString(responseTokenString);
+
+			this.accessToken = tokenResponse.getAccessToken();
+			this.tokenExpiryTime = System.currentTimeMillis() + (tokenResponse.getExpiresIn() * 1000L);
+
+			return this.accessToken;
+		} catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new UnknownException("Thread interrupted", e);
+        } catch (IOException e) {
+        	throw new UnknownException("Error while fetching access token", e);
+        }
+	}
+
+	@Override
+	public GatewayPaymentSession createPayment(Order order) throws PaymentException {
+		try {
+			String token = getValidAccessToken();
+
 			BigDecimal amount = BigDecimal.valueOf(order.getTotalAmount());
 			CreateOrderRequest request = new CreateOrderRequest(amount, "USD", returnUrl, cancelUrl);
 
-			CreateOrderResponse response = boundary.createOrder(token.getAccessToken(), request);
+			String response = boundary.createOrder(token, request);
+			CreateOrderResponse createOrderResponse = new CreateOrderResponse();
+			createOrderResponse.parseResponseString(response);
 
-			return new GatewayPaymentSession(response.getId(), response.getApproveLink());
+			return new GatewayPaymentSession(createOrderResponse.getId(), createOrderResponse.getApproveLink());
 
 		} catch (Exception e) {
-			throw new RuntimeException("Create payment failed", e);
+			throw new UnknownException("Create payment failed", e);
 		}
 	}
 
 	@Override
-	public GatewayPaymentResult completePayment(String paymentId) {
+	public GatewayPaymentResult completePayment(String paymentId) throws PaymentException {
 		try {
-			AccessTokenResponse token = boundary.getAccessToken();
+			String token = getValidAccessToken();
 
-			CaptureOrderResponse capture = boundary.captureOrder(token.getAccessToken(), paymentId);
+			String capture = boundary.captureOrder(token, paymentId);
+			CaptureOrderResponse captureOrderResponse = new CaptureOrderResponse();
+			captureOrderResponse.parseResponseString(capture);
 
-			boolean success = "COMPLETED".equalsIgnoreCase(capture.getStatus());
+			boolean success = "COMPLETED".equalsIgnoreCase(captureOrderResponse.getStatus());
 
-			return new GatewayPaymentResult(paymentId, success, capture.getStatus(), null);
+			return new GatewayPaymentResult(paymentId, success, captureOrderResponse.getStatus(), null);
 
 		} catch (Exception e) {
 			return new GatewayPaymentResult(paymentId, false, "ERROR", e.getMessage());
