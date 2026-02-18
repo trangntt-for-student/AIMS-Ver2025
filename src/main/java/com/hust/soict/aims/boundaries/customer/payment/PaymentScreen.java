@@ -8,8 +8,8 @@ import com.hust.soict.aims.controls.PlaceOrderController;
 import com.hust.soict.aims.controls.PayOrderController;
 import com.hust.soict.aims.controls.CartController;
 import com.hust.soict.aims.entities.Invoice;
-import com.hust.soict.aims.entities.QRCode;
 import com.hust.soict.aims.entities.Order;
+import com.hust.soict.aims.entities.payments.QRCode;
 import com.hust.soict.aims.utils.ServiceProvider;
 import static com.hust.soict.aims.utils.UIConstant.*;
 

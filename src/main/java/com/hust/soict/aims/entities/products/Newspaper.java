@@ -1,4 +1,4 @@
-package com.hust.soict.aims.entities;
+package com.hust.soict.aims.entities.products;
 
 public class Newspaper extends Product {
     private String editorInChief;

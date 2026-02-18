@@ -1,4 +1,4 @@
-package com.hust.soict.aims.entities;
+package com.hust.soict.aims.entities.payments;
 
 public class QRCode {
     private String qrCode; // Base64 or URL of QR code image

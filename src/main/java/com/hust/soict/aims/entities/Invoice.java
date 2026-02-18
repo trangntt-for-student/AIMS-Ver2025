@@ -1,5 +1,7 @@
 package com.hust.soict.aims.entities;
 
+import com.hust.soict.aims.entities.payments.PaymentTransaction;
+
 public class Invoice {
     private double subtotal;
     private double shippingFee;

@@ -1,4 +1,4 @@
-package com.hust.soict.aims.entities;
+package com.hust.soict.aims.entities.products;
 
 public class DVD extends Product {
     private String discType; // Blu-ray, HD-DVD

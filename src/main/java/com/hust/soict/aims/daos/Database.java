@@ -1,6 +1,11 @@
 package com.hust.soict.aims.daos;
 
 import com.hust.soict.aims.entities.*;
+import com.hust.soict.aims.entities.products.Book;
+import com.hust.soict.aims.entities.products.CD;
+import com.hust.soict.aims.entities.products.DVD;
+import com.hust.soict.aims.entities.products.Newspaper;
+import com.hust.soict.aims.entities.products.Product;
 
 import java.sql.*;
 import java.util.*;

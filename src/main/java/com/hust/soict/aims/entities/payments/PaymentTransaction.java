@@ -1,4 +1,4 @@
-package com.hust.soict.aims.entities;
+package com.hust.soict.aims.entities.payments;
 
 import java.time.LocalDateTime;
 

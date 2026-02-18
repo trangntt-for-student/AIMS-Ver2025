@@ -3,8 +3,8 @@ package com.hust.soict.aims.subsystems.vietqr;
 import java.io.IOException;
 import com.hust.soict.aims.IPaymentQRCode;
 import com.hust.soict.aims.entities.Order;
-import com.hust.soict.aims.entities.QRCode;
-import com.hust.soict.aims.entities.PaymentStatus;
+import com.hust.soict.aims.entities.payments.QRCode;
+import com.hust.soict.aims.entities.payments.QRCodePaymentStatus;
 import com.hust.soict.aims.exceptions.*;
 
 public class VietQRController implements IPaymentQRCode {
@@ -113,7 +113,7 @@ public class VietQRController implements IPaymentQRCode {
      * @throws PaymentException if check fails
      */
     @Override
-    public PaymentStatus checkPaymentStatus(Order order) throws PaymentException {
+    public QRCodePaymentStatus checkPaymentStatus(Order order) throws PaymentException {
         try {
             // Get valid access token
             String token = getValidAccessToken();
@@ -125,7 +125,7 @@ public class VietQRController implements IPaymentQRCode {
             String response = boundary.checkPaymentStatus(token, requestString);
             
             // Parse response string to PaymentStatus
-            PaymentStatus status = new PaymentStatus();
+            QRCodePaymentStatus status = new QRCodePaymentStatus();
             status.parseResponseString(response);
 
             return status;

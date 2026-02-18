@@ -1,4 +1,4 @@
-package com.hust.soict.aims.entities;
+package com.hust.soict.aims.entities.products;
 
 public class Product {
     protected long id;

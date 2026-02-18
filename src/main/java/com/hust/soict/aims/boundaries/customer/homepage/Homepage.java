@@ -5,11 +5,12 @@ import java.awt.*;
 import java.util.List;
 
 import com.hust.soict.aims.controls.ProductController;
+import com.hust.soict.aims.entities.products.Product;
 import com.hust.soict.aims.boundaries.BaseScreenHandler;
 import com.hust.soict.aims.boundaries.ProductDetailScreen;
 import com.hust.soict.aims.boundaries.customer.cart.CartScreen;
 import com.hust.soict.aims.controls.CartController;
-import com.hust.soict.aims.entities.Product;
+
 import static com.hust.soict.aims.utils.UIConstant.*;
 
 public class Homepage extends BaseScreenHandler {

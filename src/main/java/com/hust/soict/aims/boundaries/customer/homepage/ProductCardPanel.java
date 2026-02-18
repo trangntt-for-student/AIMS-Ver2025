@@ -4,8 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-import com.hust.soict.aims.entities.Product;
 import com.hust.soict.aims.controls.CartController;
+import com.hust.soict.aims.entities.products.Product;
+
 import static com.hust.soict.aims.utils.UIConstant.*;
 
 public class ProductCardPanel extends JPanel {

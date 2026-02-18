@@ -1,4 +1,4 @@
-package com.hust.soict.aims.entities;
+package com.hust.soict.aims.entities.products;
 
 public class Book extends Product {
     private String author;

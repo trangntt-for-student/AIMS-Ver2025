@@ -2,10 +2,11 @@ package com.hust.soict.aims.controls;
 
 import com.hust.soict.aims.IPaymentQRCode;
 import com.hust.soict.aims.entities.Order;
-import com.hust.soict.aims.entities.QRCode;
-import com.hust.soict.aims.entities.PaymentTransaction;
+import com.hust.soict.aims.entities.payments.PaymentTransaction;
+import com.hust.soict.aims.entities.payments.QRCode;
+import com.hust.soict.aims.entities.payments.QRCodePaymentStatus;
 import com.hust.soict.aims.exceptions.PaymentException;
-import com.hust.soict.aims.entities.PaymentStatus;
+
 import java.util.UUID;
 
 public class PayOrderController {
@@ -19,7 +20,7 @@ public class PayOrderController {
         return qrPaymentController.generateQRCode(order);
     }
     
-    public PaymentStatus checkPaymentStatus(Order order) throws PaymentException {
+    public QRCodePaymentStatus checkPaymentStatus(Order order) throws PaymentException {
         return qrPaymentController.checkPaymentStatus(order);
     }
     
@@ -30,7 +31,7 @@ public class PayOrderController {
         transaction.setAmount(order.getTotalAmount());
         
         try {
-            PaymentStatus status = checkPaymentStatus(order);
+            QRCodePaymentStatus status = checkPaymentStatus(order);
             if (status.isCompleted()) {
                 transaction.setStatus("SUCCESS");
             } else if (status.isFailed()) {

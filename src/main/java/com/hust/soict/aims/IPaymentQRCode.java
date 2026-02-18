@@ -1,9 +1,9 @@
 package com.hust.soict.aims;
 
 import com.hust.soict.aims.entities.Order;
-import com.hust.soict.aims.entities.QRCode;
+import com.hust.soict.aims.entities.payments.QRCode;
+import com.hust.soict.aims.entities.payments.QRCodePaymentStatus;
 import com.hust.soict.aims.exceptions.PaymentException;
-import com.hust.soict.aims.entities.PaymentStatus;
 
 public interface IPaymentQRCode {
     
@@ -21,5 +21,5 @@ public interface IPaymentQRCode {
      * @return PaymentStatus indicating current payment state
      * @throws PaymentException if status check fails
      */
-    PaymentStatus checkPaymentStatus(Order order) throws PaymentException;
+    QRCodePaymentStatus checkPaymentStatus(Order order) throws PaymentException;
 }

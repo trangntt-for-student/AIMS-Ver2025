@@ -4,6 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import com.hust.soict.aims.entities.*;
+import com.hust.soict.aims.entities.products.Book;
+import com.hust.soict.aims.entities.products.CD;
+import com.hust.soict.aims.entities.products.DVD;
+import com.hust.soict.aims.entities.products.Newspaper;
+import com.hust.soict.aims.entities.products.Product;
 
 public class ProductDetailScreen extends JDialog {
     public ProductDetailScreen(Frame owner, Product p) {

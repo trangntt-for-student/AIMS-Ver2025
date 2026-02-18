@@ -1,7 +1,7 @@
 package com.hust.soict.aims.controls;
 
 import com.hust.soict.aims.entities.CartItem;
-import com.hust.soict.aims.entities.Product;
+import com.hust.soict.aims.entities.products.Product;
 
 import java.util.ArrayList;
 import java.util.List;

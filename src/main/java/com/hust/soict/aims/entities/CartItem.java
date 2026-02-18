@@ -1,5 +1,7 @@
 package com.hust.soict.aims.entities;
 
+import com.hust.soict.aims.entities.products.Product;
+
 public class CartItem {
     private Product product;
     private int quantity;

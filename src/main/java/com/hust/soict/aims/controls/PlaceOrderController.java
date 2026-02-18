@@ -2,6 +2,7 @@ package com.hust.soict.aims.controls;
 
 import com.hust.soict.aims.daos.Database;
 import com.hust.soict.aims.entities.*;
+import com.hust.soict.aims.entities.payments.PaymentTransaction;
 import com.hust.soict.aims.services.shipping.IShippingFeeCalculator;
 import com.hust.soict.aims.services.shipping.WeightBaseShippingFeeCalculator;
 import com.hust.soict.aims.utils.ServiceProvider;

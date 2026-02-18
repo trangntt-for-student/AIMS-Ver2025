@@ -1,15 +1,15 @@
-package com.hust.soict.aims.entities;
+package com.hust.soict.aims.entities.payments;
 
 /**
  * Entity representing payment status check result
  */
-public class PaymentStatus {
+public class QRCodePaymentStatus {
     private String status;    // "PENDING", "COMPLETED", "FAILED", "CANCELLED"
     private String message;   // Additional message about payment status
     
-    public PaymentStatus() {}
+    public QRCodePaymentStatus() {}
     
-    public PaymentStatus(String status, String message) {
+    public QRCodePaymentStatus(String status, String message) {
         this.status = status;
         this.message = message;
     }

@@ -1,5 +1,5 @@
 package com.hust.soict.aims;
 
-public class IPaymentGateway {
-
+public interface IPaymentGateway {
+	
 }
