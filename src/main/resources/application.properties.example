@@ -22,3 +22,10 @@ vietqr.bankCode=970415
 # System current strategies
 shippingFeeCalculator.class=com.hust.soict.aims.services.shipping.WeightBaseShippingFeeCalculator
 notification.class=com.hust.soict.aims.services.notification.MailNotification
+
+# Email notification config (using Gmail SMTP)
+mail.smtp.host=smtp.gmail.com
+mail.smtp.port=587
+mail.smtp.starttls.enable=true
+mail.sender.email=YOUR_EMAIL@gmail.com
+mail.sender.password=YOUR_APP_PASSWORD
