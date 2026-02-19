@@ -13,7 +13,6 @@ import java.util.UUID;
 public class PayThroughPaymentGatewayController {
     private final IPaymentGateway paymentGateway;
     
-    
     private static final long PAYMENT_TIMEOUT_MS = 120_000;
     private static final long POLL_INTERVAL_MS = 2000;
 
@@ -21,17 +20,6 @@ public class PayThroughPaymentGatewayController {
         this.paymentGateway = paymentGateway;
     }
 
-    /**
-     * Process payment for an order through the payment gateway.
-     * Flow:
-     * 1. Create payment session via gateway
-     * 2. Open browser for user to approve payment
-     * 3. Poll for payment completion
-     * 4. Return PaymentTransaction with result
-     *
-     * @param order The order to pay for
-     * @return PaymentTransaction with payment result
-     */
     public PaymentTransaction payOrder(Order order) {
         PaymentTransaction transaction = new PaymentTransaction();
         transaction.setTransactionId(UUID.randomUUID().toString());
