@@ -3,10 +3,7 @@ package com.hust.soict.aims;
 import javax.swing.*;
 
 import com.hust.soict.aims.utils.PaymentServiceProvider;
-import com.hust.soict.aims.controls.ProductController;
-import com.hust.soict.aims.controls.CartController;
-import com.hust.soict.aims.boundaries.customer.homepage.Homepage;
-import com.hust.soict.aims.boundaries.ScreenNavigator;
+import com.hust.soict.aims.boundaries.LandingPage;
 
 public class App {
 	public static void main(String[] args) {
@@ -17,12 +14,8 @@ public class App {
 		PaymentServiceProvider.getInstance().initialize();
 
 		SwingUtilities.invokeLater(() -> {
-			ProductController productController = new ProductController();
-			CartController cartController = new CartController();
-
-			Homepage homepage = new Homepage(productController, cartController);
-		
-			ScreenNavigator.getInstance().navigateTo(homepage);
+			LandingPage landingPage = new LandingPage();
+			landingPage.setVisible(true);
 		});
 	}
 }

@@ -71,7 +71,7 @@ public class PayPalController implements IPaymentGateway {
 	public GatewayPaymentSession createPayment(Order order) throws PaymentException {
 		try {
 			String token = getValidAccessToken();
-
+			
 			BigDecimal amount = BigDecimal.valueOf(order.getTotalAmount());
 			BigDecimal amountUsd = CurrencyConverter.vndToUsd(amount);
 			CreateOrderRequest request = new CreateOrderRequest(amountUsd, "USD", returnUrl, cancelUrl);
