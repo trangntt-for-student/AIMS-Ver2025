@@ -2,6 +2,7 @@ package com.hust.soict.aims.entities;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import com.hust.soict.aims.utils.MoneyConstant;
 
 public class Order {
     private String id;
@@ -11,7 +12,6 @@ public class Order {
     private LocalDateTime createdAt;
     private String status;
     private Invoice invoice;
-    private static final double TAX = 0.1;
 
     public Order() { this.createdAt = LocalDateTime.now(); }
 
@@ -55,6 +55,6 @@ public class Order {
     
     public double getTotalAmount() {
     	long amount = (long) (getSubtotal() + getShippingFee());
-        return amount + amount * TAX;
+        return amount + amount * MoneyConstant.TAX;
     }
 }
