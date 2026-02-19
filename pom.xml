@@ -50,6 +50,9 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <version>2.7.12</version>
+        <configuration>
+          <mainClass>com.hust.soict.aims.App</mainClass>
+        </configuration>
         <executions>
           <execution>
             <goals>
