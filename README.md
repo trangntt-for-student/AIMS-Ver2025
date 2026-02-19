@@ -46,3 +46,9 @@ Use Maven to run the application:
 mvn spring-boot:run
 ```
 Or run directly from your IDE by executing the `com.hust.soict.aims.App.java` class.
+
+## Demo Video
+Access the demo video at: [Link](https://drive.google.com/file/d/13FzSrJPtGZeRqdwedNQwygYB_PN4d-Mg/view?usp=sharing)
+
+## Copy Right
+© 2026 AIMS - SOICT HUST by Dr. Nguyen Thi Thu Trang and Teaching Assistants
