@@ -194,10 +194,11 @@ public class DeliveryInfoScreen extends BaseScreenHandler {
         // Validate required fields
         String name = nameField.getText().trim();
         String phone = phoneField.getText().trim();
+        String email = emailField.getText().trim();
         String city = cityField.getText().trim();
         String address = addressArea.getText().trim();
         
-        if (name.isEmpty() || phone.isEmpty() || city.isEmpty() || address.isEmpty()) {
+        if (name.isEmpty() || phone.isEmpty() || email.isEmpty() || city.isEmpty() || address.isEmpty()) {
             JOptionPane.showMessageDialog(this,
                 "Please fill all required fields (*)",
                 "Validation Error",
@@ -214,9 +215,8 @@ public class DeliveryInfoScreen extends BaseScreenHandler {
                 return;
             }
         
-        // Validate email if provided
-        String email = emailField.getText().trim();
-        if (!email.isEmpty() && !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+        // Validate email format
+        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
             JOptionPane.showMessageDialog(this,
                 "Invalid email format.",
                 "Validation Error",
@@ -227,6 +227,7 @@ public class DeliveryInfoScreen extends BaseScreenHandler {
         // Create delivery info
         deliveryInfo = new DeliveryInfo();
         deliveryInfo.setReceiverName(name);
+        deliveryInfo.setEmail(email);
         deliveryInfo.setPhone(phone);
         deliveryInfo.setCity(city);
         deliveryInfo.setDistrict(districtField.getText().trim());

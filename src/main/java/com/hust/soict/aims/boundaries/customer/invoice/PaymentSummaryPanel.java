@@ -3,9 +3,7 @@ package com.hust.soict.aims.boundaries.customer.invoice;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-
 import com.hust.soict.aims.entities.Invoice;
-
 import static com.hust.soict.aims.utils.UIConstant.*;
 
 public class PaymentSummaryPanel extends JPanel {
@@ -13,6 +11,7 @@ public class PaymentSummaryPanel extends JPanel {
     
     private JLabel subtotalLabel;
     private JLabel shippingLabel;
+    private JLabel taxLabel;
     private JLabel totalLabel;
     
     public PaymentSummaryPanel(Invoice invoice) {
@@ -58,6 +57,12 @@ public class PaymentSummaryPanel extends JPanel {
         add(createSummaryRow("Shipping Fee:", shippingLabel));
         add(Box.createRigidArea(new Dimension(0, SPACING_MEDIUM)));
         
+        // Tax row
+        taxLabel = new JLabel();
+        taxLabel.setFont(FONT_BODY);
+        add(createSummaryRow("Tax:", taxLabel));
+        add(Box.createRigidArea(new Dimension(0, SPACING_MEDIUM)));
+        
         // Separator
         JSeparator separator = new JSeparator();
         separator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 2));
@@ -101,6 +106,7 @@ public class PaymentSummaryPanel extends JPanel {
     private void updateSummary() {
         subtotalLabel.setText(String.format("%,.0f₫", invoice.getSubtotal()));
         shippingLabel.setText(String.format("%,.0f₫", invoice.getShippingFee()));
+        taxLabel.setText(String.format("%,.0f₫", invoice.getTax()));
         totalLabel.setText(String.format("%,.0f₫", invoice.getTotal()));
     }
 }
