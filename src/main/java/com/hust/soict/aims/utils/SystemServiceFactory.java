@@ -1,11 +1,17 @@
 package com.hust.soict.aims.utils;
 
+import com.hust.soict.aims.services.notification.INotification;
 import com.hust.soict.aims.services.shipping.IShippingFeeCalculator;
 
 public class SystemServiceFactory {   
     public static IShippingFeeCalculator createShippingFeeCalculator() {
         String fullClassName = ConfigLoader.getProperty("shippingFeeCalculator.class");
         return createInstance(fullClassName, IShippingFeeCalculator.class);
+    }
+    
+    public static INotification createNotificationService() {
+        String fullClassName = ConfigLoader.getProperty("notification.class");
+        return createInstance(fullClassName, INotification.class);
     }
     
     @SuppressWarnings("unchecked")

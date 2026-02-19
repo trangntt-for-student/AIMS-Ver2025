@@ -5,6 +5,7 @@ import com.hust.soict.aims.entities.*;
 import com.hust.soict.aims.entities.payments.PaymentTransaction;
 import com.hust.soict.aims.entities.payments.QRCode;
 import com.hust.soict.aims.exceptions.PaymentException;
+import com.hust.soict.aims.services.notification.OrderConfirmationService;
 import com.hust.soict.aims.services.shipping.IShippingFeeCalculator;
 import com.hust.soict.aims.utils.SystemServiceFactory;
 import com.hust.soict.aims.utils.PaymentServiceProvider;
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 public class PlaceOrderController {
     private final IShippingFeeCalculator shippingFeeCalculator;
+    private final OrderConfirmationService orderNotificationService;
     private final PayOrderController payOrderController;
     private final PayThroughPaymentGatewayController gatewayPaymentController;
     
@@ -22,6 +24,7 @@ public class PlaceOrderController {
     
     public PlaceOrderController() {
         this.shippingFeeCalculator = SystemServiceFactory.createShippingFeeCalculator();
+        this.orderNotificationService = new OrderConfirmationService();
         this.payOrderController = new PayOrderController(
             PaymentServiceProvider.getInstance().getQRPaymentSubsystem()
         );
@@ -129,6 +132,9 @@ public class PlaceOrderController {
         // Set order status to pending
         currentOrder.setStatus("pending");
         
+        // Send order confirmation notification
+        orderNotificationService.sendOrderConfirmation(currentOrder, invoice, transaction);
+        
         PlaceOrderResult result = PlaceOrderResult.success("Order completed successfully");
         result.invoice = invoice;
         return result;
@@ -185,7 +191,7 @@ public class PlaceOrderController {
         if (currentOrder == null || currentOrder.getDeliveryInfo() == null) {
             return null;
         }
-        return new Invoice(subtotal, currentOrder.getShippingFee());
+        return new Invoice(subtotal, currentOrder.getShippingFee(), currentOrder.getTotalAmount());
     }
         
     public Order getCurrentOrder() {
