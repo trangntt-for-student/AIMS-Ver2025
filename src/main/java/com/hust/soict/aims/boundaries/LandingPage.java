@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
+import java.net.URL;
 
 import com.hust.soict.aims.boundaries.customer.homepage.Homepage;
 import com.hust.soict.aims.controls.CartController;
@@ -20,6 +21,12 @@ public class LandingPage extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
+        
+        // Set taskbar icon
+        URL iconURL = getClass().getResource("/icon.png");
+        if (iconURL != null) {
+            setIconImage(new ImageIcon(iconURL).getImage());
+        }
         
         // Main panel with light background
         JPanel mainPanel = new JPanel() {

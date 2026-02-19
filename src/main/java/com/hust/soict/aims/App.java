@@ -7,6 +7,9 @@ import com.hust.soict.aims.boundaries.LandingPage;
 
 public class App {
 	public static void main(String[] args) {
+		// Disable headless mode for Swing GUI
+		System.setProperty("java.awt.headless", "false");
+		
 		// Start embedded Spring Boot for PayPal callbacks
 		EmbeddedTomcat.startAndGetContext(new String[]{});
 

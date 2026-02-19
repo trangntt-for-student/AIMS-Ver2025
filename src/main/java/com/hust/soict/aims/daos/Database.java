@@ -8,10 +8,83 @@ import com.hust.soict.aims.entities.products.Product;
 
 import java.sql.*;
 import java.util.*;
+import java.io.*;
+import java.nio.file.*;
 
 public class Database {
-    private static final String DB_FILE = "src/main/resources/aims.db";
-    private static final String URL = "jdbc:sqlite:" + DB_FILE;
+    private static final String DB_URL;
+    
+    static {
+        DB_URL = "jdbc:sqlite:" + getDbPath();
+    }
+    
+    private static String getDbPath() {
+        // Check if running from JAR
+        String classPath = Database.class.getProtectionDomain()
+                .getCodeSource().getLocation().getPath();
+        
+        // On Windows, remove leading slash from path like /D:/...
+        if (classPath.matches("^/[A-Za-z]:.*")) {
+            classPath = classPath.substring(1);
+        }
+        
+        // Decode URL encoding (spaces, etc.)
+        try {
+            classPath = java.net.URLDecoder.decode(classPath, "UTF-8");
+        } catch (Exception e) {
+            // ignore
+        }
+        
+        File classLocation = new File(classPath);
+        
+        // Case 1: Running from JAR file
+        if (classLocation.isFile() && classPath.endsWith(".jar")) {
+            File dbFile = new File(classLocation.getParentFile(), "aims.db");
+            if (!dbFile.exists()) {
+                extractDatabase(dbFile);
+            }
+            return dbFile.getAbsolutePath();
+        }
+        
+        // Case 2: Running from IDE - check if src/main/resources/aims.db exists
+        File ideDbFile = new File("src/main/resources/aims.db");
+        if (ideDbFile.exists()) {
+            return ideDbFile.getAbsolutePath();
+        }
+        
+        // Case 3: Running from target/classes (Maven build, but not JAR)
+        // Go up from target/classes to project root, then to src/main/resources
+        if (classPath.contains("target")) {
+            File targetDir = classLocation;
+            while (targetDir != null && !targetDir.getName().equals("target")) {
+                targetDir = targetDir.getParentFile();
+            }
+            if (targetDir != null) {
+                File projectRoot = targetDir.getParentFile();
+                File dbFile = new File(projectRoot, "src/main/resources/aims.db");
+                if (dbFile.exists()) {
+                    return dbFile.getAbsolutePath();
+                }
+            }
+        }
+        
+        // Case 4: Fallback - use aims.db in current directory
+        File fallbackDb = new File("aims.db");
+        return fallbackDb.getAbsolutePath();
+    }
+    
+    private static void extractDatabase(File targetFile) {
+        try (InputStream is = Database.class.getResourceAsStream("/aims.db")) {
+            if (is != null) {
+                Files.copy(is, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                System.out.println("Database extracted to: " + targetFile.getAbsolutePath());
+            } else {
+                System.out.println("No embedded database found, will create new one.");
+            }
+        } catch (IOException e) {
+            System.err.println("Failed to extract database: " + e.getMessage());
+        }
+    }
     
     /**
      * Functional interface for setting PreparedStatement parameters
@@ -22,7 +95,7 @@ public class Database {
     }
 
     public static void initDatabase() {
-        try (Connection conn = DriverManager.getConnection(URL)) {
+        try (Connection conn = DriverManager.getConnection(DB_URL)) {
             try (Statement st = conn.createStatement()) {
                 st.execute("CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT, title TEXT, originalValue REAL, currentPrice REAL, weight REAL, dimension TEXT, description TEXT, extra TEXT)");
                 // ensure stock column exists
@@ -116,7 +189,7 @@ public class Database {
     }
 
     public static int countProducts() {
-        try (Connection conn = DriverManager.getConnection(URL); Statement st = conn.createStatement(); ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM products")) {
+        try (Connection conn = DriverManager.getConnection(DB_URL); Statement st = conn.createStatement(); ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM products")) {
             if (rs.next()) return rs.getInt(1);
         } catch (SQLException e) { e.printStackTrace(); }
         return 0;
@@ -124,7 +197,7 @@ public class Database {
 
     public static int getStock(long productId) {
         String q = "SELECT stock FROM products WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(URL); PreparedStatement ps = conn.prepareStatement(q)) {
+        try (Connection conn = DriverManager.getConnection(DB_URL); PreparedStatement ps = conn.prepareStatement(q)) {
             ps.setLong(1, productId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) return rs.getInt("stock");
@@ -138,7 +211,7 @@ public class Database {
         int current = getStock(productId);
         if (current < amount) return false;
         String u = "UPDATE products SET stock = stock - ? WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(URL); PreparedStatement ps = conn.prepareStatement(u)) {
+        try (Connection conn = DriverManager.getConnection(DB_URL); PreparedStatement ps = conn.prepareStatement(u)) {
             ps.setInt(1, amount);
             ps.setLong(2, productId);
             int affected = ps.executeUpdate();
@@ -149,7 +222,7 @@ public class Database {
 
     public static void setStock(long productId, int stock) {
         String u = "UPDATE products SET stock = ? WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(URL); PreparedStatement ps = conn.prepareStatement(u)) {
+        try (Connection conn = DriverManager.getConnection(DB_URL); PreparedStatement ps = conn.prepareStatement(u)) {
             ps.setInt(1, stock);
             ps.setLong(2, productId);
             ps.executeUpdate();
@@ -187,7 +260,7 @@ public class Database {
      */
     public static int countSearchResults(String searchTerm) {
         String q = "SELECT COUNT(*) FROM products WHERE LOWER(title) LIKE ?";
-        try (Connection conn = DriverManager.getConnection(URL); PreparedStatement ps = conn.prepareStatement(q)) {
+        try (Connection conn = DriverManager.getConnection(DB_URL); PreparedStatement ps = conn.prepareStatement(q)) {
             ps.setString(1, "%" + searchTerm.toLowerCase() + "%");
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) return rs.getInt(1);
@@ -201,7 +274,7 @@ public class Database {
      */
     private static List<Product> queryProducts(String sql, PreparedStatementSetter setter) {
         List<Product> list = new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection(URL); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DriverManager.getConnection(DB_URL); PreparedStatement ps = conn.prepareStatement(sql)) {
             setter.set(ps);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {

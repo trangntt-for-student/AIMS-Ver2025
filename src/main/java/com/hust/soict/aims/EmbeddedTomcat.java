@@ -17,7 +17,9 @@ public class EmbeddedTomcat {
 
         CompletableFuture<ConfigurableApplicationContext> contextFuture = new CompletableFuture<>();
         Thread t = new Thread(() -> {
-            var ctx = SpringApplication.run(EmbeddedTomcat.class, args);
+            SpringApplication app = new SpringApplication(EmbeddedTomcat.class);
+            app.setHeadless(false);  // Allow Swing GUI
+            var ctx = app.run(args);
             applicationContext = ctx;
             contextFuture.complete(ctx);
         }, "spring-boot-thread");

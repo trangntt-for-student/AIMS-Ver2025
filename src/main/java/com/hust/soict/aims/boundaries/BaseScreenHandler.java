@@ -2,6 +2,7 @@ package com.hust.soict.aims.boundaries;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
 
 import static com.hust.soict.aims.utils.UIConstant.*;
 
@@ -57,6 +58,12 @@ public abstract class BaseScreenHandler extends JFrame {
         setTitle(screenTitle);
         setSize(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        // Set taskbar icon
+        URL iconURL = getClass().getResource("/icon.png");
+        if (iconURL != null) {
+            setIconImage(new ImageIcon(iconURL).getImage());
+        }
         
         // Lifecycle hook: before initialization
         onBeforeInitialize();
