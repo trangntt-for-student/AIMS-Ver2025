@@ -1,5 +1,5 @@
 # AIMS-Ver2025
-ITSS Software Development (IT4549) and Software Design & Construction (IT4490) Capstone Project
+ Capstone Project for ITSS Software Development (IT4549 - IT4549E) and Software Design & Construction (IT4490)
 
 ## Requirements
 - JDK >= 17
@@ -33,11 +33,11 @@ Copy the contents of `application.properties.example` and paste them into `appli
 
 Visit: https://developer.paypal.com/dashboard/ to obtain the necessary information for PayPal configuration.
 - Step 1: Create a sandbox account (if you don't have one).
-- Step 2: Create a new application in the Apps & Credentials section to get the Client ID and Secret.
+- Step 2: Create a new application in the "Apps & Credentials" section to get the Client ID and Secret.
 
 Visit: https://vietqr.vn/merchant/request to obtain the necessary information for VietQR configuration.
 - Step 1: Create a new account.
-- Step 2: Create a new application in the Apps & Credentials section to get the Username and Password.
+- Step 2: Create a new application in the "Tich hop va ket noi --> API SERVICE" section to get the Username and Password.
 - Step 3: Create a new bank account in the Bank Accounts section to get the Bank Account Number, Bank Account Name, and Bank Code.
 
 ### Run the application
@@ -48,7 +48,7 @@ mvn spring-boot:run
 Or run directly from your IDE by executing the `com.hust.soict.aims.App.java` class.
 
 ## Demo Video
-Access the demo video at: [Link](https://drive.google.com/file/d/13FzSrJPtGZeRqdwedNQwygYB_PN4d-Mg/view?usp=sharing)
+Access the demo video at: [Link video demo GG Drive](https://drive.google.com/file/d/1nvYJ7yIdJZ5kNfJbcXc7dmvHD4p5XorA/view?usp=sharing)
 
 ## Copy Right
-© 2026 AIMS - SOICT HUST by Dr. Nguyen Thi Thu Trang and Teaching Assistants
+© 2026 AIMS - SoICT HUST by Dr. NGUYEN Thi Thu Trang and Teaching Assistants
