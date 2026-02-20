@@ -17,19 +17,13 @@ public class CartItemPanel extends JPanel {
     // Callbacks
     private ActionListener onQuantityChanged;
     private ActionListener onRemove;
-    
-    /**
-     * Constructor
-     */
+
     public CartItemPanel(CartItem cartItem) {
         this.cartItem = cartItem;
         setupUI();
         bindEvents();
     }
-    
-    /**
-     * Setup the UI components
-     */
+
     private void setupUI() {
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         setBorder(BorderFactory.createCompoundBorder(
@@ -56,9 +50,6 @@ public class CartItemPanel extends JPanel {
         add(rightPanel);
     }
     
-    /**
-     * Create product info panel (left)
-     */
     private JPanel createProductInfoPanel() {
         JPanel panel = new JPanel(new GridLayout(2, 1, 0, SPACING_XSMALL));
         panel.setOpaque(false);
@@ -80,9 +71,6 @@ public class CartItemPanel extends JPanel {
         return panel;
     }
     
-    /**
-     * Create quantity control panel (center)
-     */
     private JPanel createQuantityPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, SPACING_XSMALL, SPACING_SMALL));
         panel.setOpaque(false);
@@ -107,9 +95,6 @@ public class CartItemPanel extends JPanel {
         return panel;
     }
     
-    /**
-     * Create actions panel (right) - subtotal and remove button
-     */
     private JPanel createActionsPanel() {
         JPanel panel = new JPanel(new GridLayout(2, 1, 0, SPACING_XSMALL));
         panel.setOpaque(false);
@@ -139,9 +124,6 @@ public class CartItemPanel extends JPanel {
         return panel;
     }
     
-    /**
-     * Bind events
-     */
     private void bindEvents() {
         // Quantity spinner change
         qtySpinner.addChangeListener(e -> {
@@ -163,45 +145,27 @@ public class CartItemPanel extends JPanel {
         });
     }
     
-    /**
-     * Update subtotal label
-     */
     private void updateSubtotal(int quantity) {
         double itemSubtotal = cartItem.getProduct().getCurrentPrice() * quantity;
         subtotalLabel.setText(String.format("%,.0f₫", itemSubtotal));
     }
     
-    /**
-     * Set callback when quantity changes
-     */
     public void setOnQuantityChanged(ActionListener listener) {
         this.onQuantityChanged = listener;
     }
     
-    /**
-     * Set callback when remove button is clicked
-     */
     public void setOnRemove(ActionListener listener) {
         this.onRemove = listener;
     }
     
-    /**
-     * Get cart item
-     */
     public CartItem getCartItem() {
         return cartItem;
     }
     
-    /**
-     * Get current quantity from spinner
-     */
     public int getCurrentQuantity() {
         return (Integer) qtySpinner.getValue();
     }
     
-    /**
-     * Update quantity programmatically
-     */
     public void setQuantity(int quantity) {
         qtySpinner.setValue(quantity);
         updateSubtotal(quantity);
