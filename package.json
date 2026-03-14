@@ -1,0 +1,14 @@
+{
+  "name": "aims-ver2025",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AIMS - An Internet Media Store",
+  "scripts": {
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
+    "husky": "^9.0.0"
+  }
+}

@@ -30,5 +30,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
 # Ignore application properties file containing secrets
 src/main/resources/application.properties
+
+### Node ###
+node_modules/
